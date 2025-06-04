@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Resume - Navnath D. Kale</title>
+    <style>
+
+    /* Important for how the entire page looks */
+     @page {
+        size : A4;
+        margin: 0; 
+     }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8f8f8;
+        margin: 0; /* Ensure no default margin on the body */
+        padding: 0; /* Ensure no default padding on the body */
+      }
+
+      .resume-container {
+        max-width: 800px;
+        /* margin: 30px auto;  -- REMOVED THIS TO CONTROL TOP MARGIN PRECISELY */
+        margin-left: auto; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+        margin-top: 0; /* THIS IS THE KEY CHANGE: Remove top margin from the container itself */
+        margin-bottom: 30px; /* Keep bottom margin if desired */
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        color: #333;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      /* Header Section Styling */
+      .header-section {
+        background: #2c3e50;
+        color: white;
+        padding: 30px 40px; /* This padding will create the space around the content inside the header */
+        text-align: center;
+      }
+
+      .header-section h1 {
+        font-size: 38px;
+        margin-bottom: 8px;
+        color: white;
+        letter-spacing: 1.5px;
+      }
+
+      .header-section .contact-info {
+        font-size: 16px;
+        font-style: normal;
+        color: #ecf0f1;
+        margin-bottom: 0;
+      }
+
+      .header-section .contact-info span {
+        margin: 0 10px;
+      }
+
+      /* Content Sections Styling */
+      .content-section {
+        padding: 25px 40px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .content-section:last-child {
+        border-bottom: none;
+      }
+
+      h2 {
+        font-size: 22px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #2980b9;
+        border-bottom: 2px solid #2980b9;
+        padding-bottom: 6px;
+        letter-spacing: 0.5px;
+      }
+
+      p,
+      li {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 8px;
+      }
+
+      ul {
+        padding-left: 25px;
+        margin-top: 0;
+        list-style: disc;
+      }
+
+      li {
+        margin-bottom: 6px;
+      }
+
+      .job-entry {
+        margin-bottom: 15px;
+      }
+
+      .job-entry:last-child {
+        margin-bottom: 0;
+      }
+
+      .job-entry strong {
+        font-size: 16px;
+        color: #34495e;
+      }
+
+      .job-entry em {
+        color: #666;
+        font-style: normal;
+      }
+
+      .job-entry .duration {
+        font-size: 14px;
+        color: #7f8c8d;
+        display: block;
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="resume-container">
+      <div class="header-section">
+        <h1>{{ name }}</h1>
+        <p class="contact-info">
+          <span>Email: {{ email }}</span> | <span>Phone: {{ phone }}</span>
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Summary</h2>
+        <p>{{ summary }}</p>
+      </div>
+
+      <div class="content-section">
+        <h2>Skills</h2>
+        <ul>
+          {% for skill in skills %}
+          <li>{{ skill }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>Experience</h2>
+        {% for job in experience %}
+        <div class="job-entry">
+          <strong>{{ job.role }}</strong> at <em>{{ job.company }}</em>
+          <span class="duration">({{ job.duration }})</span><br />
+          {{ job.description }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
