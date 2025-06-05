@@ -25,12 +25,15 @@ user_data = {
 }
 
 # === Read Template HTML ===
-with open("template.html", "r") as f:
+with open("sample-template.html", "r") as f:
     html_content = f.read()
 
+print("html_content: ", html_content)
 # === Render with Jinja2 ===
 template = Template(html_content)
 rendered_html = template.render(user_data)
+
+print("rendered_html: ", rendered_html)
 
 # === Generate PDF ===
 HTML(string=rendered_html, base_url='.').write_pdf("resume.pdf")
