@@ -43,3 +43,5 @@ This project dynamically creates beautiful PDF resumes using **HTML + CSS** rend
 
 * Sets **each PDF page** to square (1024x1024).
 * ⚠️ May show **extra white space** if your layout doesn’t fill the new dimensions.
+
+### Always for FastAPI use "Depends" it works like middleware but as well as it send the output of middleware function to the argument of current router function
