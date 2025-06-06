@@ -20,7 +20,12 @@ const promptSchema = new mongoose.Schema(
       // it means which conversation this prompt belongs to
       type: String,
       required: true,
+      index : true    // if conversation is long, it will be stored in index
     },
+    resumeUrl : {   // cloudinary url
+      type : String,
+      trim : true
+    }
   },
   {
     timestamps: true,

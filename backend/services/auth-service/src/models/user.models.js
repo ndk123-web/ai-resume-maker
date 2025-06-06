@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const userSchema = new mongoose.Schema(
   {
@@ -50,6 +51,10 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', async function (next) {
   // Middleware for password hashing
   if (!this.isModified('password')) {
+    return next();
+  }
+
+  if (!this.isModified('refreshToken')) {
     return next();
   }
 
