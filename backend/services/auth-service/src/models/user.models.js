@@ -38,18 +38,16 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-// Middleware for password hashing
 userSchema.pre('save', async function (next) {
+  // Middleware for password hashing
   if (!this.isModified('password')) {
     return next();
   }
 
-  // hash password of 10 iterations and replace the hashed password
-  this.password = await bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10); // hash password of 10 iterations and replace the hashed password
 
-  // imporant because this is before save middleware
+  next(); // imporant because this is before save middleware
   // only trigger when password is modified and before save it works
-  next();
 });
 
 // to check the password is correct or not
