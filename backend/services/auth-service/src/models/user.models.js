@@ -32,12 +32,21 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    isPremium : {
+      type : Boolean,
+      default : false
+    },
+    bio : {
+      type : String,
+      default : ""
+    }
   },
   {
     timestamps: true,
   },
 );
 
+// mongoose middleware
 userSchema.pre('save', async function (next) {
   // Middleware for password hashing
   if (!this.isModified('password')) {

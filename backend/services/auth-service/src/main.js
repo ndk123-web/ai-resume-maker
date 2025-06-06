@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(express.static('public'));
 
 // This is a global error handler
-app.use((req, res, next, err) => {
+app.use((err, req, res, next) => {
   res.status(500).json(new ApiError(500, 'Something Went Wrong in Server !'));
   next(err);
 });
