@@ -1,26 +1,24 @@
-import express from "express";
+import 'dotenv/config';
+
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { ApiError } from './utils/ApiError';
 
 const app = express();
 
-try {
-  app.get(
-    "/",
-    (req, res, next) => {
-      next();
-    },
-    (req, res) => {
-      res.send({
-        message: "This is Express",
-      });
-    }
-  );
+// all middlewares will be here
+app.use(express.json({ limit: '30kb' })); // it means 30kb data will be allowed
+app.use(express.urlencoded({ limit: '30kb', extended: true }));
+app.use(cookieParser());
+app.use(express.static('public'));
 
-  app.listen(3000, () => {
-    console.log("Express is Listening on Port 3000");
-  });
-} catch (err) {
-  const error = {
-    message: err.message,
-  };
-  console.log(error);
-}
+// This is a global error handler
+app.use((req, res, next, err) => {
+  res.status(500).json(new ApiError(500, 'Something Went Wrong in Server !'));
+  next(err);
+});
+
+// all routes will be here
+
+export default app;
