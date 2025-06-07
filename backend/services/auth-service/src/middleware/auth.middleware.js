@@ -8,8 +8,8 @@ import { User } from '../models/user.models.js';
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
   const accessToken =
-    req.headers['Authorization'].replace('Bearer ', '') ||
-    req.cookies.accessToken.replace('Bearer ', '');
+    req.headers['Authorization'] ||
+    req.cookies.accessToken;
   const refreshToken = req.cookies.refreshToken;
 
   if (!accessToken || !refreshToken) {
@@ -17,7 +17,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.decode(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    const decoded = jwt.decode(accessToken.replace('Bearer ', ''), process.env.ACCESS_TOKEN_SECRET);
 
     if (!decoded) {
       throw new ApiError(401, 'Invalid Access Token');

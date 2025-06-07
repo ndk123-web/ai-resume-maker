@@ -9,4 +9,9 @@ const userRouter = Router();
 userRouter.post('/register-user', registerUser);
 userRouter.post('/login-user', loginUser);
 
+// testing jwt
+userRouter.get('/test', verifyJWT, (req, res) => {
+  return res.status(200).json(new ApiResponse(200, { message: 'Jwt verified' }));
+});
+
 export { userRouter };

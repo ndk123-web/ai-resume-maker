@@ -41,6 +41,15 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, 'Invalid Validation for register schema');
   }
 
+  // we need to check whether user Exist or not
+  const isUserExist = await User.findOne({
+    $or: [{ email: req.body.email }, { username: req.body.username }],
+  });
+
+  if (isUserExist) {
+    throw new ApiError(400, 'User Already Exist');
+  }
+
   // create method automatically save the user
   const newUserInstance = await User.create({
     username: req.body.username.toLowerCase(),
@@ -89,7 +98,6 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const loggedInUser = await User.findById(user._id).select('-password -refreshToken');
-
   loggedInUser.refreshToken = refreshToken;
   await loggedInUser.save();
 
@@ -112,5 +120,7 @@ const loginUser = asyncHandler(async (req, res) => {
       }),
     );
 });
+
+// Testing JWT
 
 export { registerUser, loginUser };
