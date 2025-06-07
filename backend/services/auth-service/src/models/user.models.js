@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema(
     },
     avtar: {
       type: String, // cloudinary url
-      required: true,
     },
     refreshToken: {
       type: String,
@@ -51,10 +50,6 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', async function (next) {
   // Middleware for password hashing
   if (!this.isModified('password')) {
-    return next();
-  }
-
-  if (!this.isModified('refreshToken')) {
     return next();
   }
 

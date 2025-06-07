@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { verifyJWT } from '../middleware/auth.middleware.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { registerUser, loginUser } from '../controllers/user.controller.js';
 
 const userRouter = Router();
 
-userRouter.get('/', verifyJWT, (req, res) => {
-  return res.status(200).json(new ApiResponse(200, { user: "Successfully it api/v1/users" }, 'Success'));
-});
+// for register we dont need jwt middlewar
+userRouter.post('/register-user', registerUser);
+userRouter.post('/login-user', loginUser);
 
 export { userRouter };

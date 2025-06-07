@@ -32,7 +32,7 @@ app.use('/api/v1/user', userRouter);
 // Global Error Handler
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
-    return res.json({
+    return res.status(401).json({
       success: false,
       message: err.message,
       errors: err.errors,
@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
   }
 
   // if unknown Error then
-  return res.json({
+  return res.status(500).json({
     success: false,
     message: err.message,
     errors: err.errors,
