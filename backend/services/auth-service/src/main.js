@@ -8,17 +8,43 @@ import { ApiError } from './utils/ApiError.js';
 const app = express();
 
 // all middlewares will be here
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  }),
+);
 app.use(express.json({ limit: '30kb' })); // it means 30kb data will be allowed
 app.use(express.urlencoded({ limit: '30kb', extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
 
 // This is a global error handler
-app.use((err, req, res, next) => {
-  res.status(500).json(new ApiError(500, 'Something Went Wrong in Server !'));
-  next(err);
-});
 
-// all routes will be here
+// all imports routes will be here
+import { userRouter } from './routers/user.router.js';
+
+// all routes
+app.use('/api/v1/user', userRouter);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  if (err instanceof ApiError) {
+    return res.json({
+      success: false,
+      message: err.message,
+      errors: err.errors,
+    });
+  }
+
+  // if unknown Error then
+  return res.json({
+    success: false,
+    message: err.message,
+    errors: err.errors,
+  });
+});
 
 export default app;

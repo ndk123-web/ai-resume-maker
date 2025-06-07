@@ -6,7 +6,7 @@
 // and we are passing the controller function inside that mddleware
 const asyncHandler = (controllerFn) => {
   return async (req, res, next) => {
-    return Promise.resolve(controllerFn(req, res)).catch((err) => next(err));
+    return Promise.resolve(controllerFn(req, res, next)).catch((err) => next(err));
   };
 };
 
