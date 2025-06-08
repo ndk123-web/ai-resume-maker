@@ -3,11 +3,16 @@ from api.routes.resume_route import resume_router
 from fastapi.middleware.cors import CORSMiddleware
 from api.db.db import ping_server
 from api.utils.addMiddlewares import setupMiddlewares
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
 # setup middlewares
-setupMiddlewares(app)
+async def set_middlewares():
+    await setupMiddlewares(app)   
 
 # Setup DB CONNECTION
 @app.on_event("startup")
