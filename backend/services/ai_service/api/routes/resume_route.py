@@ -1,6 +1,6 @@
 # ✅ routes/resume_route.py
 from fastapi import APIRouter, Request, Depends
-from ..middleware.auth_middleware import verifyJWT
+from api.middleware.auth_middleware import verifyJWT
 from ..utils.apiResponse import ApiResponse
 from ..utils.apiError import ApiError
 
