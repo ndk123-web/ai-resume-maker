@@ -30,19 +30,19 @@ async def create_resume(payload: Resume , user_payload=Depends(verifyJWT)):
         print("User Prompt: ",payload.resumePrompt)
 
         is_want_pdf_prompt = os.getenv("IS_WANT_PDF_PROMPT") + payload.resumePrompt
-        is_want_pdf_response = generate_response(is_want_pdf_prompt.strip().lower())
+        is_want_pdf_response = await generate_response(is_want_pdf_prompt.strip().lower())
 
         print("First Final Prompt: ",is_want_pdf_prompt)
         print("First Final Response: ",is_want_pdf_response)
 
-        if is_want_pdf_response.strip().lower() == "no":
+        if is_want_pdf_response.splitlines()[0].strip().lower() == "no":
             return ApiResponse.send(
                 statusCode=200,
                 message="Normal Response",
-                data={"response": is_want_pdf_response}
+                data={"response": is_want_pdf_response[3:].lower().strip()}
             )
 
-        elif is_want_pdf_response.strip().lower() == "yes":
+        else:
 
             file_path = await handle_resume_creation(user_prompt=payload, user_payload=user_payload)
             print("User Prompt: ",payload.resumePrompt)
@@ -52,8 +52,6 @@ async def create_resume(payload: Resume , user_payload=Depends(verifyJWT)):
 
             return FileResponse(file_path,media_type="application/pdf")
 
-        elif is_want_pdf_response.strip().lower() == "" or is_want_pdf_prompt == "":
-            return ApiError.send(statusCode=500,message="Failed to is_want_pdf_response",data=[])
 
     except Exception as e:
         return ApiError.send(

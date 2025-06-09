@@ -7,7 +7,7 @@ from weasyprint import HTML
 
 async def handle_resume_creation(user_prompt, user_payload):
 
-    response = generate_response(prompt=user_prompt.resumePrompt)
+    response = await generate_response(prompt=user_prompt.resumePrompt)
     if not response:
         # Raise an exception, don't return ApiError.send()
         raise Exception("Could not verify JWT or GeminiApi Problem")
