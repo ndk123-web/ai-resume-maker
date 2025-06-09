@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.db.db import ping_server
 from api.utils.addMiddlewares import setupMiddlewares
 from dotenv import load_dotenv
+import os
 
 # Load environment variables
 load_dotenv()
@@ -27,6 +28,7 @@ async def startup_event():
 # For Test
 @app.get("/")
 def read_root():
+    print(os.getenv("BASE_PROMPT"))
     return {"Hello": "World"}
 
 # Routes
