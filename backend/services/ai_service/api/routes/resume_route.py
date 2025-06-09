@@ -1,4 +1,5 @@
 import os
+from api.utils.cloudinary import upload_image_from_url
 
 from fastapi import APIRouter, Request, Depends
 from pydantic import BaseModel
@@ -62,7 +63,10 @@ async def create_resume(
             # If the controller returns an error, return it
             if not file_path:
                 return ApiError.send(statusCode=500,message="Failed to create resume",data=[])
-
+            
+            src_url = await upload_image_from_url(file_path,user_payload["username"] + ".pdf")
+            print("File Path: ",file_path)
+            
             # If the controller returns a file path, return it as a file response
             return FileResponse(file_path,media_type="application/pdf")
 

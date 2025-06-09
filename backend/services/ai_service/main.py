@@ -27,7 +27,7 @@ async def startup_event():
 
 # For Test
 @app.get("/")
-def read_root():
+async def read_root():
     print(os.getenv("BASE_PROMPT"))
     return {"Hello": "World"}
 
