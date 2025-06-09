@@ -10,6 +10,7 @@ def generate_response(prompt: str):
             model="gemini-2.0-flash", contents=prompt
         )
         print("Response has come: \n")
+        # print(response)
         return response.text
 
     except Exception as e:

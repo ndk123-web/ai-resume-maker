@@ -17,13 +17,13 @@ async def ping_server():
       
 async def get_collection():
     client = AsyncIOMotorClient(os.getenv("MONGO_URI"), server_api=ServerApi('1'))
-    collections = await client['ai-resume'].list_collection_names()
+    collections = await client['ai-resumes'].list_collection_names()
     print("Collections: ",collections)
     return collections
 
 async def get_users_data():
     cluseter = AsyncIOMotorClient(os.getenv("MONGO_URI"), server_api=ServerApi('1'))
-    db = cluseter['ai-resume']
+    db = cluseter['ai-resumes']
     collection = db['users']
     
     cursor = collection.find()

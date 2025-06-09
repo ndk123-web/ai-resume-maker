@@ -30,4 +30,4 @@ def read_root():
     return {"Hello": "World"}
 
 # Routes
-app.include_router(resume_router, prefix="/api/v1/resume")
+app.include_router(resume_router, prefix="/api/v1/resumes")
