@@ -1,38 +1,21 @@
-import asyncio
+# api/utils/db.py
+
+import os
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.errors import ServerSelectionTimeoutError
 from pymongo.server_api import ServerApi
-import os 
+from api.utils.apiError import ApiError
+
+# Create global client instance
+client = AsyncIOMotorClient(os.getenv("MONGO_DB_URI"), server_api=ServerApi("1") , serverSelectionTimeoutMS=5000)
+db = client["ai-resume"]
 
 async def ping_server():
+    try:
+        db_instance = await client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB! ", db_instance)
+        return True
+    except Exception as e:
+        print("Error when Ping to Mongo Server: ",str(e))
+        return False
 
-  client = AsyncIOMotorClient(os.getenv("MONGO_DB_URI"), server_api=ServerApi('1'))
-
-  try:
-      dbInstance = await client.admin.command('ping')
-      print("Pinged your deployment. You successfully connected to MongoDB! ", dbInstance)
-      return True  
-  except Exception as e:
-      print(e)
-      return False
-      
-async def get_collection():
-    client = AsyncIOMotorClient(os.getenv("MONGO_URI"), server_api=ServerApi('1'))
-    collections = await client['ai-resumes'].list_collection_names()
-    print("Collections: ",collections)
-    return collections
-
-async def get_users_data():
-    cluseter = AsyncIOMotorClient(os.getenv("MONGO_URI"), server_api=ServerApi('1'))
-    db = cluseter['ai-resumes']
-    collection = db['users']
-    
-    cursor = collection.find()
-    users = []
-    
-    async for document in cursor:
-        document['_id'] = str(document['_id'])
-        users.append(document)
-    
-    print("Users: ",users)
-    return users 
-    

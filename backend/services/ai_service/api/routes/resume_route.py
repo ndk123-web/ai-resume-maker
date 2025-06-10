@@ -9,6 +9,9 @@ from api.utils.apiError import ApiError
 from api.controller.resume_controller import handle_resume_creation
 from fastapi.responses import FileResponse
 from api.utils.generateResponse import generate_response
+from api.db.db import db 
+from datetime import datetime
+from bson import ObjectId
 
 # Define API router for resume endpoints
 resume_router = APIRouter()
@@ -36,6 +39,8 @@ async def create_resume(
         return {"error": user_payload["error"]}
 
     try:
+        
+        prompt_collection = db['prompts']
         # Print the user prompt
         print("User Prompt: ",payload.resumePrompt)
 
@@ -49,9 +54,26 @@ async def create_resume(
 
         # If the AI response is "no", return a normal response
         if is_want_pdf_response.splitlines()[0].strip().lower() == "no":
+            
+            
+            userId = "684490318f5df116072f5feb"
+            sessionId = "df1"
+            
+            insertPrompt = prompt_collection.insert_one({
+                "user" : ObjectId(userId),
+                "userPrompt" : payload.resumePrompt,
+                "userResponse": is_want_pdf_response[3:].lower().strip(),
+                "sessionId" : sessionId,
+                "resumeUrl" : "",
+                "createdAt" : datetime.now(),
+                "updatedAt" : datetime.now()
+            })
+            
+            print("Insert Prompt: ",insertPrompt)
+
             return ApiResponse.send(
                 statusCode=200,
-                message="Normal Response",
+                message="Normal Response and Successsfully Inserted the Prompt in DB",
                 data={"response": is_want_pdf_response[3:].lower().strip()}
             )
 
@@ -64,11 +86,36 @@ async def create_resume(
             if not file_path:
                 return ApiError.send(statusCode=500,message="Failed to create resume",data=[])
             
-            src_url = await upload_image_from_url(file_path,user_payload["username"] + ".pdf")
+            cloud_url_path = await upload_image_from_url(file_path,user_payload["username"] + ".pdf")
             print("File Path: ",file_path)
             
+            userId = "684490318f5df116072f5feb"
+            sessionId = "df1"
+            
+            insertPrompt = prompt_collection.insert_one({
+                "user" : ObjectId(userId),
+                "userPrompt" : payload.resumePrompt,
+                "userResponse": is_want_pdf_response[4:].lower().strip(),
+                "sessionId" : sessionId,
+                "resumeUrl" : cloud_url_path,
+                "createdAt" : datetime.now(),
+                "updatedAt" : datetime.now()
+            })
+            
+            if not insertPrompt:
+                return ApiError.send(statusCode=500,message="Failed to insert prompt in DB",data=[])
+            
             # If the controller returns a file path, return it as a file response
-            return FileResponse(file_path,media_type="application/pdf")
+            # return FileResponse(file_path,media_type="application/pdf")
+            
+            return ApiResponse.send(
+                200,
+                {
+                    "cloudFileUrl": cloud_url_path,
+                    "response": is_want_pdf_response.lower().strip()
+                },
+                "Successfully Inserted the Prompt in DB"
+            )
 
 
     except Exception as e:
@@ -78,4 +125,5 @@ async def create_resume(
             message=str(e),
             data={"error": str(e)}
         )
+
 
