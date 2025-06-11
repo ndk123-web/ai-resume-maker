@@ -186,27 +186,42 @@ const Home = () => {
 
   return (
     <div
-      className={`min-h-screen transition-all duration-300 ${
+      className={`min-h-screen w-full overflow-x-hidden transition-all duration-300 ${
         theme === "dark" ? "bg-gray-900" : "bg-gray-100"
       }`}
     >
-      {/* Hero Section */}
-      <HeroSection theme={theme} stats={stats} />
+      {/* Container wrapper to prevent overflow */}
+      <div className="w-full max-w-full">
+        {/* Hero Section */}
+        <div className="w-full overflow-x-hidden">
+          <HeroSection theme={theme} stats={stats} />
+        </div>
 
-      {/* Features Section */}
-      <FeatureSection theme={theme} features={features} />
+        {/* Features Section */}
+        <div className="w-full overflow-x-hidden">
+          <FeatureSection theme={theme} features={features} />
+        </div>
 
-      {/* Benefits Section */}
-      <BenefitSection theme={theme} benefits={benefits} />
+        {/* Benefits Section */}
+        <div className="w-full overflow-x-hidden">
+          <BenefitSection theme={theme} benefits={benefits} />
+        </div>
 
-      {/* Testimonials Section */}
-      <TestiMonals theme={theme} testimonials={testimonials} />
+        {/* Testimonials Section */}
+        <div className="w-full overflow-x-hidden">
+          <TestiMonals theme={theme} testimonials={testimonials} />
+        </div>
 
-      {/* Pricing Section */}
-      <PriciingSection theme={theme} pricingPlans={pricingPlans} />
+        {/* Pricing Section */}
+        <div className="w-full overflow-x-hidden">
+          <PriciingSection theme={theme} pricingPlans={pricingPlans} />
+        </div>
 
-      {/* CTA Section */}
-      <CTASection theme={theme} />
+        {/* CTA Section */}
+        <div className="w-full overflow-x-hidden">
+          <CTASection theme={theme} />
+        </div>
+      </div>
     </div>
   );
 };

@@ -58,11 +58,12 @@ const Header = () => {
           : "bg-white/80 border-gray-200/50"
       } backdrop-blur-xl border-b`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Main container with proper constraints */}
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo Section */}
           <motion.div
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 flex-shrink-0"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -118,7 +119,7 @@ const Header = () => {
           </nav>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
@@ -177,7 +178,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Fixed overflow issues */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -185,10 +186,10 @@ const Header = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden"
+              className="md:hidden overflow-hidden w-full"
             >
               <div
-                className={`py-4 space-y-2 border-t ${
+                className={`py-4 space-y-2 border-t w-full ${
                   theme === "dark" ? "border-gray-700" : "border-gray-200"
                 }`}
               >
@@ -200,17 +201,18 @@ const Header = () => {
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ x: 4 }}
                     onClick={() => setIsMenuOpen(false)}
+                    className="w-full" // Ensure full width
                   >
                     <Link
                       to={item.href}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 w-full ${
                         theme === "dark"
                           ? "text-gray-300 hover:bg-gray-800 hover:text-white"
                           : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                       }`}
                     >
                       {item.icon}
-                      <span className="font-medium">{item.name}</span>
+                      <span className="font-medium truncate">{item.name}</span>
                     </Link>
                   </motion.div>
                 ))}

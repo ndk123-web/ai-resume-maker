@@ -53,7 +53,7 @@ const BenefitSection = ({ theme, benefits }) => {
                 }`}
               >
                 Everything You Need to
-                <span className="block bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                   Land Your Dream Job
                 </span>
               </h2>
