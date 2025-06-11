@@ -59,7 +59,6 @@ const Header = () => {
       } backdrop-blur-xl border-b`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link to={'/'}> 
         <div className="flex justify-between items-center h-16">
           {/* Logo Section */}
           <motion.div
@@ -67,7 +66,7 @@ const Header = () => {
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <div className="relative">
+            <Link to="/" className="relative">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -80,7 +79,8 @@ const Header = () => {
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-            </div>
+            </Link>
+
             <div className="hidden sm:block">
               <h1
                 className={`text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}
@@ -176,7 +176,6 @@ const Header = () => {
             </motion.button>
           </div>
         </div>
-        </Link>
 
         {/* Mobile Menu */}
         <AnimatePresence>

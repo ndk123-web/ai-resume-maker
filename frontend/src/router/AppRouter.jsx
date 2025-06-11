@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Home, Footer } from "../pages";
-import { Header } from "../components";
+import { Home } from "../pages";
+import { Header, Footer } from "../components";
 
 const router = createBrowserRouter([
   {
@@ -9,6 +9,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Header />
+        <Home />
         <Footer />
       </>
     ),
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Header />
-        <Home />
+
         <Footer />
       </>
     ),
