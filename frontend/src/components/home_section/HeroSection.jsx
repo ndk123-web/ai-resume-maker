@@ -1,4 +1,3 @@
-import React, { useState, createContext, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -30,25 +29,8 @@ import {
   Linkedin,
   Github,
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { themeContext } from "../../context/context";
 
-const HeroSection = () => {
-  const { theme, setTheme } = useContext(themeContext);
-    const stats = [
-    {
-      icon: <Users className="w-6 h-6" />,
-      value: "50K+",
-      label: "Happy Users",
-    },
-    {
-      icon: <Download className="w-6 h-6" />,
-      value: "100K+",
-      label: "Resumes Created",
-    },
-    { icon: <Star className="w-6 h-6" />, value: "4.9", label: "Rating" },
-  ];
+const HeroSection = ( { stats , theme } ) => {
 
   return (
     <>
