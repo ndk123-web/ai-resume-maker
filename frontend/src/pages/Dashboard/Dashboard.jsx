@@ -1,15 +1,15 @@
 import React, { useState, useContext } from "react";
 import { motion } from "framer-motion";
-import { themeContext } from "../../context/context";
+
 import { ChatHistory, ChatInput, ChatMessage } from "../../components/";
 
-const Dashboard = () => {
-  const { theme } = useContext(themeContext);
-  const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentChat, setCurrentChat] = useState(null);
+import { themeContext } from "../../context/context";
+import { useSelector, useDispatch } from "react-redux";
+import { setLoading, unsetloading } from "../../redux";
 
-  // Sample chat history data
+const Dashboard = () => {
+  const [messages, setMessages] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
   const [chatHistory] = useState([
     {
       id: 1,
@@ -31,8 +31,19 @@ const Dashboard = () => {
     },
   ]);
 
+  // context   
+  const { theme } = useContext(themeContext);
+  // Redux State and Actions
+
+  const dispatch = useDispatch();
+    const isLoading = useSelector((state) => state.loading.loading);
+  // console.log("isLoading:", isLoading);
+
+
+  // Sample chat history data
+
   const handleSendMessage = async (message) => {
-    setIsLoading(true);
+    dispatch(setLoading());
 
     // Add user message
     const userMessage = {
@@ -42,7 +53,6 @@ const Dashboard = () => {
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit",
         hour12: true,
       }),
     };
@@ -57,15 +67,14 @@ const Dashboard = () => {
         content:
           "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
         timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      }),
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-      setIsLoading(false);
+      dispatch(unsetloading());
     }, 1500);
   };
 
@@ -93,8 +102,6 @@ const Dashboard = () => {
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
-
-      
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Sidebar - Chat History */}
         <ChatHistory

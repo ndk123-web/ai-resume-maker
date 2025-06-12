@@ -22,14 +22,14 @@ const router = createBrowserRouter([
       <div className="w-full overflow-x-hidden">
         <Header />
         <div className="w-full overflow-x-hidden">
-          {/* Add your home content here */}
+          <Home />
         </div>
         <Footer />
       </div>
     ),
   },
   {
-    path: "/dashboard",
+    path: "/builder",
     element: (
       <div className="w-full overflow-x-hidden">
         <Header />

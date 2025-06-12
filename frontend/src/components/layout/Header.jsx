@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
@@ -24,7 +24,15 @@ const Header = () => {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+    localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
   };
+
+  // Logic for Storing theme in local storage for user preference 
+  useEffect(() => {
+    localStorage.getItem("theme") === "dark"
+      ? setTheme("dark")
+      : setTheme("light");
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/home", icon: <Sparkles className="w-4 h-4" /> },
@@ -52,7 +60,7 @@ const Header = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-100 transition-all duration-300 ${
         theme === "dark"
           ? "bg-gray-900/80 border-gray-700/50"
           : "bg-white/80 border-gray-200/50"
