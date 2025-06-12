@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Home } from "../pages";
+import { Home, Dashboard } from "../pages";
 import { Header, Footer } from "../components";
 
 const router = createBrowserRouter([
@@ -25,6 +25,18 @@ const router = createBrowserRouter([
           {/* Add your home content here */}
         </div>
         <Footer />
+      </div>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <div className="w-full overflow-x-hidden">
+        <Header />
+        <div className="w-full overflow-x-hidden">
+          <Dashboard />
+        </div>
+        {/* <Footer /> */}
       </div>
     ),
   },
