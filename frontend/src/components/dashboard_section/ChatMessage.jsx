@@ -10,6 +10,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
+import { Loader } from '../'
 
 const ChatMessage = ({ message, theme }) => {
   const [copied, setCopied] = useState(false);
@@ -87,35 +88,10 @@ const ChatMessage = ({ message, theme }) => {
               : "bg-white text-gray-900 rounded-bl-md border border-gray-200 shadow-sm"
           }`}
         >
+
+          {/* Chat Loader */}
           {isLoading ? (
-            <div className="flex items-center space-x-2">
-              <div className="flex space-x-1">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.5, 1, 0.5],
-                    }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      delay: i * 0.2,
-                    }}
-                    className={`w-2 h-2 rounded-full ${
-                      theme === "dark" ? "bg-gray-400" : "bg-gray-500"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span
-                className={`text-sm ${
-                  theme === "dark" ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                AI is thinking...
-              </span>
-            </div>
+            <Loader theme={theme}/>
           ) : (
             <div className="prose prose-sm max-w-none">
               <p className="whitespace-pre-wrap leading-relaxed">

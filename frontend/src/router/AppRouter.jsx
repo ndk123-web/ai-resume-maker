@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { Home, Dashboard } from "../pages";
-import { Header, Footer } from "../components";
+import { Header, Footer , PriciingSection } from "../components";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +40,18 @@ const router = createBrowserRouter([
       </div>
     ),
   },
+  {
+    path : '/pricing',
+    element : (
+      <div className="w-full overflow-x-hidden">
+        <Header />
+        <div className="w-full overflow-x-hidden">
+          <PriciingSection />
+        </div>
+        <Footer />
+      </div>
+    )
+  }
 ]);
 
 export default router;

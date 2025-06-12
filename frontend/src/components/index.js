@@ -10,6 +10,8 @@ import ChatHistory from "./dashboard_section/ChatHistory";
 import ChatInput from "./dashboard_section/ChatInput";
 import ChatMessage from "./dashboard_section/ChatMessage";
 import ResponsiveLayout from "./dashboard_section/ResponsiveLayout";
+import BlurText from "./ui/BlurText";
+import Loader from "./ui/Loader";
 
 export {
   Header,
@@ -17,8 +19,10 @@ export {
   HeroSection,
   FeatureSection,
   BenefitSection,
+  Loader,
   CTASection,
   TestiMonals,
+  BlurText,
   PriciingSection,
   ChatHistory,
   ChatInput,

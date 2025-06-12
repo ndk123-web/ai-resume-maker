@@ -2,9 +2,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./app.css";
 import App from "./App.jsx";
-import { config } from "dotenv";
-
-config();
 
 import { useContext } from "react";
 import router from "./router/AppRouter.jsx";

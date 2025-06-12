@@ -7,11 +7,15 @@ import { PERSIST, REHYDRATE, PAUSE, FLUSH, PURGE } from "redux-persist";
 import authReducer from "../slices/auth.slice.js";
 import userReducer from "../slices/user.slice.js";
 import loadingSlicer from "../slices/loading.slice.js";
+import userChatSliceReducer from "../slices/user_chat_history.slice.js";
+import currentSessionSliceReducer from "../slices/current_session.slice.js";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   loading: loadingSlicer,
+  user_chat_history: userChatSliceReducer,
+  current_session: currentSessionSliceReducer,
 });
 
 const persistConfig = {
@@ -24,6 +28,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
+
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
       serializableCheck: {

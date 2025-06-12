@@ -140,49 +140,7 @@ const Home = () => {
     },
   ];
 
-  const pricingPlans = [
-    {
-      name: "Free",
-      price: "$0",
-      period: "forever",
-      features: [
-        "1 Resume",
-        "3 Templates",
-        "PDF Export",
-        "Basic AI Assistance",
-      ],
-      popular: false,
-      gradient: "from-gray-500 to-gray-600",
-    },
-    {
-      name: "Pro",
-      price: "$9.99",
-      period: "month",
-      features: [
-        "Unlimited Resumes",
-        "50+ Templates",
-        "All Export Formats",
-        "Advanced AI",
-        "Priority Support",
-      ],
-      popular: true,
-      gradient: "from-purple-500 to-pink-500",
-    },
-    {
-      name: "Team",
-      price: "$19.99",
-      period: "month",
-      features: [
-        "Everything in Pro",
-        "Team Collaboration",
-        "Custom Branding",
-        "Analytics Dashboard",
-        "API Access",
-      ],
-      popular: false,
-      gradient: "from-blue-500 to-cyan-500",
-    },
-  ];
+
 
   return (
     <div
@@ -214,7 +172,7 @@ const Home = () => {
 
         {/* Pricing Section */}
         <div className="w-full overflow-x-hidden">
-          <PriciingSection theme={theme} pricingPlans={pricingPlans} />
+          <PriciingSection theme={theme} />
         </div>
 
         {/* CTA Section */}

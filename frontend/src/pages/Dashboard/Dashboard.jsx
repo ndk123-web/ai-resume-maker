@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { motion } from "framer-motion";
 
-import { ChatHistory, ChatInput, ChatMessage } from "../../components/";
+import { ChatHistory, ChatInput, ChatMessage , Loader } from "../../components/";
 
 import { themeContext } from "../../context/context";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,6 +10,8 @@ import { setLoading, unsetloading } from "../../redux";
 const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
+
+  // Need to fetch from API and need to store in redux 
   const [chatHistory] = useState([
     {
       id: 1,
