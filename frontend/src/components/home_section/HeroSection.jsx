@@ -30,6 +30,7 @@ import {
   Github,
 } from "lucide-react";
 import { BlurText } from "../../components/";
+import { Link } from "react-router-dom";
 
 const HeroSection = ({ stats, theme }) => {
   return (
@@ -105,7 +106,9 @@ const HeroSection = ({ stats, theme }) => {
               >
                 <span className="flex items-center space-x-2">
                   <Rocket className="w-5 h-5" />
-                  <span>Start Building Free</span>
+                  <Link to={"/auth"}>
+                    <span>Start Building Free</span>
+                  </Link>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </motion.button>

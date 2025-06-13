@@ -1,15 +1,7 @@
-
-import './App.css'
+import { useContext, useEffect } from "react";
 
 function App() {
-
-  return (
-    <>
-      <p className='text-3xl bg-red-500'>
-        Hello
-      </p>
-    </>
-  )
+  return <div>App</div>;
 }
 
-export default App
+export default App;

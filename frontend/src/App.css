@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Prevent horizontal overflow globally */
+/* Prevent horizontal overflow globally
 html, body {
   overflow-x: hidden;
   max-width: 100vw;
@@ -12,9 +12,9 @@ html, body {
 }
 
 /* Mobile-specific overflow prevention */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .container {
     max-width: 100vw !important;
     overflow-x: hidden !important;
   }
-}
+} */

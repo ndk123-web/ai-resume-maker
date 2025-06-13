@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Home, Dashboard } from "../pages";
-import { Header, Footer , PriciingSection } from "../components";
+import { Home, Dashboard, AuthPages } from "../pages";
+import { Header, Footer, PriciingSection, ProtectedRoute } from "../components";
 
 const router = createBrowserRouter([
   {
@@ -19,30 +19,34 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: (
-      <div className="w-full overflow-x-hidden">
-        <Header />
+      <ProtectedRoute>
         <div className="w-full overflow-x-hidden">
-          <Home />
+          <Header />
+          <div className="w-full overflow-x-hidden">
+            <Home />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </ProtectedRoute>
     ),
   },
   {
     path: "/builder",
     element: (
-      <div className="w-full overflow-x-hidden">
-        <Header />
+      <ProtectedRoute>
         <div className="w-full overflow-x-hidden">
-          <Dashboard />
+          <Header />
+          <div className="w-full overflow-x-hidden">
+            <Dashboard />
+          </div>
+          {/* <Footer /> */}
         </div>
-        {/* <Footer /> */}
-      </div>
+      </ProtectedRoute>
     ),
   },
   {
-    path : '/pricing',
-    element : (
+    path: "/pricing",
+    element: (
       <div className="w-full overflow-x-hidden">
         <Header />
         <div className="w-full overflow-x-hidden">
@@ -50,8 +54,33 @@ const router = createBrowserRouter([
         </div>
         <Footer />
       </div>
-    )
-  }
+    ),
+  },
+  {
+    path: "/auth",
+    element: (
+      <div className="w-full mt-15 overflow-x-hidden">
+        <Header />
+        <div className="w-full m-top-10 overflow-x-hidden">
+          <AuthPages />
+        </div>
+        <Footer />
+      </div>
+    ),
+  },
+  {
+    path: "/templates",
+    element: (
+      <ProtectedRoute>
+        <div className="w-full overflow-x-hidden">
+          <Header />
+          <div className="w-full overflow-x-hidden">
+            <Dashboard />
+          </div>
+        </div>
+      </ProtectedRoute>
+    ),
+  },
 ]);
 
 export default router;

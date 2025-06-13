@@ -12,12 +12,14 @@ import ChatMessage from "./dashboard_section/ChatMessage";
 import ResponsiveLayout from "./dashboard_section/ResponsiveLayout";
 import BlurText from "./ui/BlurText";
 import Loader from "./ui/Loader";
+import ProtectedRoute from "./Protected/Protected";
 
 export {
   Header,
   Footer,
   HeroSection,
   FeatureSection,
+  ProtectedRoute,
   BenefitSection,
   Loader,
   CTASection,

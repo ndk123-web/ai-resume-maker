@@ -27,7 +27,7 @@ const Header = () => {
     localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
   };
 
-  // Logic for Storing theme in local storage for user preference 
+  // Logic for Storing theme in local storage for user preference
   useEffect(() => {
     localStorage.getItem("theme") === "dark"
       ? setTheme("dark")
@@ -56,14 +56,9 @@ const Header = () => {
   ];
 
   return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-100 transition-all duration-300 ${
-        theme === "dark"
-          ? "bg-gray-900/80 border-gray-700/50"
-          : "bg-white/80 border-gray-200/50"
+    <header
+      className={`fixed top-0 left-0 right-0 z-100 ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       } backdrop-blur-xl border-b`}
     >
       {/* Main container with proper constraints */}
@@ -229,7 +224,7 @@ const Header = () => {
           )}
         </AnimatePresence>
       </div>
-    </motion.header>
+    </header>
   );
 };
 
