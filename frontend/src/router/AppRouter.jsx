@@ -1,32 +1,28 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-import { Home, Dashboard, AuthPages } from "../pages";
-import { Header, Footer, PriciingSection, ProtectedRoute } from "../components";
+import { createBrowserRouter } from "react-router-dom";
+import { Home, Dashboard, AuthPages } from "../pages/";
+import {
+  PriciingSection,
+  ProtectedRoute,
+  MainLayout,
+  Header,
+} from "../components/";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <div className="w-full overflow-x-hidden">
-        <Header />
-        <div className="w-full overflow-x-hidden">
-          <Home />
-        </div>
-        <Footer />
-      </div>
+      <MainLayout>
+        <Home />
+      </MainLayout>
     ),
   },
   {
     path: "/home",
     element: (
       <ProtectedRoute>
-        <div className="w-full overflow-x-hidden">
-          <Header />
-          <div className="w-full overflow-x-hidden">
-            <Home />
-          </div>
-          <Footer />
-        </div>
+        <MainLayout>
+          <Home />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
@@ -34,37 +30,34 @@ const router = createBrowserRouter([
     path: "/builder",
     element: (
       <ProtectedRoute>
-        <div className="w-full overflow-x-hidden">
-          <Header />
-          <div className="w-full overflow-x-hidden">
-            <Dashboard />
-          </div>
-          {/* <Footer /> */}
-        </div>
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
   {
     path: "/pricing",
     element: (
-      <div className="w-full overflow-x-hidden">
-        <Header />
-        <div className="w-full overflow-x-hidden">
-          <PriciingSection />
-        </div>
-        <Footer />
-      </div>
+      <MainLayout>
+        <PriciingSection />
+      </MainLayout>
     ),
   },
   {
     path: "/auth",
     element: (
-      <div className="w-full mt-15 overflow-x-hidden">
+      <div
+        className={`w-full mt-5 overflow-x-hidden ${
+          localStorage.getItem("theme") === "dark"
+            ? "bg-gray-900"
+            : "bg-gray-50"
+        }`}
+      >
         <Header />
-        <div className="w-full m-top-10 overflow-x-hidden">
+        <div className="w-full mt-10 overflow-x-hidden">
           <AuthPages />
         </div>
-        <Footer />
       </div>
     ),
   },
@@ -72,15 +65,22 @@ const router = createBrowserRouter([
     path: "/templates",
     element: (
       <ProtectedRoute>
-        <div className="w-full overflow-x-hidden">
-          <Header />
-          <div className="w-full overflow-x-hidden">
-            <Dashboard />
-          </div>
-        </div>
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
+  {
+    path : "/protected",
+    element : (
+      <ProtectedRoute>
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  }
 ]);
 
 export default router;

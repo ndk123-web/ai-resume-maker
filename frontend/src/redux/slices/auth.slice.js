@@ -6,6 +6,7 @@ const initialState = {
     username: null,
     email: null,
   },
+  isAuthChecked: false,
 };
 
 const authSlice = createSlice({
@@ -13,19 +14,23 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      (state.status = true), (state.userData = action.payload);
-      return state;
+      state.status = true;
+      state.userData = action.payload;
+      state.isAuthChecked = true;
     },
     logout: (state) => {
-      (state.status = false),
-        (state.userData = {
-          name: null,
-          email: null,
-        });
-      return state;
+      state.status = false;
+      state.userData = {
+        username: null,
+        email: null,
+      };
+      state.isAuthChecked = false;
+    },
+    markAuthChecked: (state) => {
+      state.isAuthChecked = true;
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, markAuthChecked } = authSlice.actions;
 export default authSlice.reducer;

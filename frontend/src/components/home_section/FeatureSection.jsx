@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext , useEffect} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -35,7 +35,14 @@ import { useNavigate } from "react-router-dom";
 import { themeContext } from "../../context/context";
 import { HeroSection } from "../../components/";
 
-const FeatureSection = ( { theme , features } ) => {
+const FeatureSection = ({ theme, features }) => {
+  const { setTheme } = useContext(themeContext);
+
+  useEffect(() => {
+    localStorage.getItem("theme") === "dark"
+      ? setTheme("dark")
+      : setTheme("light");
+  }, []);
 
   return (
     <>

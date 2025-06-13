@@ -15,7 +15,7 @@ import {
   Crown,
 } from "lucide-react";
 import { themeContext } from "../../context/context";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -55,11 +55,20 @@ const Header = () => {
     { name: "Logout", icon: <LogOut className="w-4 h-4" />, href: "/logout" },
   ];
 
+  const location = useLocation();
+  const path = location.pathname;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-100 ${
-        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-      } backdrop-blur-xl border-b`}
+      className={`fixed top-0 left-0 right-0 z-100 border-b backdrop-blur-xl ${
+        theme === "dark"
+          ? path === "/auth"
+            ? "bg-gray-900 border-gray-700"
+            : "bg-gray-900/80 border-gray-700/50"
+          : path === "/auth"
+          ? "bg-white border-gray-200"
+          : "bg-white/80 border-gray-200/50"
+      }`}
     >
       {/* Main container with proper constraints */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

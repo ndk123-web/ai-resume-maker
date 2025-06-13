@@ -13,15 +13,33 @@ import {
   Github,
   Chrome,
 } from "lucide-react";
-
 import { themeContext } from "../../context/context";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../redux";
+
+import app from "../../firebase/firebase";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { nav } from "framer-motion/client";
 
 const AuthPages = () => {
   const { theme, setTheme } = useContext(themeContext);
+  const dispatch = useDispatch();
+  const isAuth = useSelector((state) => state.auth.status);
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const auth = getAuth(app);
 
   // Form states
   const [signInData, setSignInData] = useState({
@@ -43,6 +61,41 @@ const AuthPages = () => {
       ? setTheme("dark")
       : setTheme("light");
   }, []);
+
+  const handleSignUpSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Sign Up Data:", signUpData);
+    console.log("isAuth: ", isAuth);
+
+    if (signUpData.password !== signUpData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        signUpData.email,
+        signUpData.password
+      );
+
+      const user = response.user;
+
+      // Dispatch login with user info
+      dispatch(
+        login({
+          username: user.displayName || signUpData.fullName,
+          email: user.email,
+        })
+      );
+
+      // Navigate after login state is updated
+      navigate("/builder");
+    } catch (err) {
+      alert(err.message);
+      navigate("/auth"); // Only on error
+    }
+  };
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -71,10 +124,20 @@ const AuthPages = () => {
     // Handle sign in logic here
   };
 
-  const handleSignUpSubmit = (e) => {
-    e.preventDefault();
-    console.log("Sign Up Data:", signUpData);
-    // Handle sign up logic here
+  const handleSignUpWithGoogle = () => {
+    // Handle sign up with Google logic here
+  };
+
+  const handleSignInWithGoogle = () => {
+    // Handle sign in with Google logic here
+  };
+
+  const handleSignInWithGithub = () => {
+    // Handle sign in with Github logic here
+  };
+
+  const handleSignInWithChrome = () => {
+    // Handle sign in with Chrome logic here
   };
 
   return (

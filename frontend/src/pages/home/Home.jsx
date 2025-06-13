@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -44,6 +44,12 @@ import {
 
 const Home = () => {
   const { theme, setTheme } = useContext(themeContext);
+
+  useEffect(() => {
+    localStorage.getItem("theme") === "dark"
+      ? setTheme("dark")
+      : setTheme("light");
+  }, []);
 
   const features = [
     {
@@ -139,8 +145,6 @@ const Home = () => {
       rating: 5,
     },
   ];
-
-
 
   return (
     <div

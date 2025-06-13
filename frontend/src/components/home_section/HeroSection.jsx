@@ -31,8 +31,17 @@ import {
 } from "lucide-react";
 import { BlurText } from "../../components/";
 import { Link } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { themeContext } from "../../context/context";
 
 const HeroSection = ({ stats, theme }) => {
+  const { setTheme } = useContext(themeContext);
+
+  useEffect(() => {
+    localStorage.getItem("theme") === "dark"
+      ? setTheme("dark")
+      : setTheme("light");
+  }, []);
   return (
     <>
       <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">

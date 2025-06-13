@@ -13,11 +13,13 @@ import ResponsiveLayout from "./dashboard_section/ResponsiveLayout";
 import BlurText from "./ui/BlurText";
 import Loader from "./ui/Loader";
 import ProtectedRoute from "./Protected/Protected";
+import MainLayout from "./ui/MainLayout";
 
 export {
   Header,
   Footer,
   HeroSection,
+  MainLayout,
   FeatureSection,
   ProtectedRoute,
   BenefitSection,
