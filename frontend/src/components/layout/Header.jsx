@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
@@ -14,6 +14,8 @@ import {
   FileText,
   Crown,
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux";
 import { themeContext } from "../../context/context";
 import { Link, useLocation } from "react-router-dom";
 
@@ -21,11 +23,35 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { theme, setTheme } = useContext(themeContext); // Your context
+  const isAuth = useSelector((state) => state.auth.status);
+  const username = useSelector((state) => state.auth.userData.username);
+  const dispatch = useDispatch();
+  const profileRef = useRef(null);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
     localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
   };
+
+  // Handle sign out
+  const handleSignOut = () => {
+    dispatch(logout());
+    setIsProfileOpen(false);
+  };
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Logic for Storing theme in local storage for user preference
   useEffect(() => {
@@ -43,16 +69,6 @@ const Header = () => {
     },
     { name: "AI Builder", href: "/builder", icon: <Zap className="w-4 h-4" /> },
     { name: "Pricing", href: "/pricing", icon: <Crown className="w-4 h-4" /> },
-  ];
-
-  const profileMenuItems = [
-    { name: "Profile", icon: <User className="w-4 h-4" />, href: "/profile" },
-    {
-      name: "Settings",
-      icon: <Settings className="w-4 h-4" />,
-      href: "/settings",
-    },
-    { name: "Logout", icon: <LogOut className="w-4 h-4" />, href: "/logout" },
   ];
 
   const location = useLocation();
@@ -160,6 +176,76 @@ const Header = () => {
               </AnimatePresence>
             </motion.button>
 
+            {/* Profile Avatar Dropdown - Only show on desktop */}
+            {isAuth && (
+              <div className="hidden md:block relative" ref={profileRef}>
+                <motion.button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className={`flex items-center space-x-2 p-1 pr-3 rounded-full transition-all duration-200 ${
+                    theme === "dark" ? "hover:bg-gray-800" : "hover:bg-gray-100"
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {/* Default Avatar */}
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      theme === "dark"
+                        ? "bg-gray-700 text-gray-300"
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    <User className="w-4 h-4" />
+                  </div>
+                  {/* Username */}
+                  <span
+                    className={`text-sm font-medium truncate max-w-20 ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    {username || "User"}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isProfileOpen ? "rotate-180" : ""
+                    } ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+                  />
+                </motion.button>
+
+                {/* Profile Dropdown */}
+                <AnimatePresence>
+                  {isProfileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className={`absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg border ${
+                        theme === "dark"
+                          ? "bg-gray-800 border-gray-700"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <div className="py-2">
+                        <motion.button
+                          onClick={handleSignOut}
+                          className={`w-full flex items-center space-x-3 px-4 py-2 text-left transition-all duration-200 ${
+                            theme === "dark"
+                              ? "text-gray-300 hover:bg-gray-700 hover:text-white"
+                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                          }`}
+                          whileHover={{ x: 4 }}
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span className="font-medium">Sign Out</span>
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
             {/* Mobile Menu Button */}
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -228,6 +314,54 @@ const Header = () => {
                     </Link>
                   </motion.div>
                 ))}
+
+                {/* Mobile Sign Out Option */}
+                {isAuth && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navItems.length * 0.1 }}
+                    whileHover={{ x: 4 }}
+                    className="w-full border-t pt-2 mt-2"
+                  >
+                    <div
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg ${
+                        theme === "dark"
+                          ? "text-gray-300 border-gray-700"
+                          : "text-gray-600 border-gray-200"
+                      }`}
+                    >
+                      {/* User Info */}
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          theme === "dark"
+                            ? "bg-gray-700 text-gray-300"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        <User className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          {username || "User"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          handleSignOut();
+                          setIsMenuOpen(false);
+                        }}
+                        className={`p-2 rounded-lg transition-all duration-200 ${
+                          theme === "dark"
+                            ? "text-gray-400 hover:bg-gray-700 hover:text-white"
+                            : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                      >
+                        <LogOut className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           )}

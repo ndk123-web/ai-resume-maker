@@ -84,7 +84,7 @@ const AuthPages = () => {
       // Dispatch login with user info
       dispatch(
         login({
-          username: user.displayName || signUpData.fullName,
+          username: user.displayName || signUpData.fullName || signInData.email,
           email: user.email,
         })
       );
@@ -102,7 +102,7 @@ const AuthPages = () => {
     localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
   };
 
-  const handleSignInChange = (e) => {
+  const handleSignInChange = async (e) => {
     const { name, value, type, checked } = e.target;
     setSignInData((prev) => ({
       ...prev,
@@ -110,7 +110,7 @@ const AuthPages = () => {
     }));
   };
 
-  const handleSignUpChange = (e) => {
+  const handleSignUpChange = async (e) => {
     const { name, value, type, checked } = e.target;
     setSignUpData((prev) => ({
       ...prev,
@@ -118,10 +118,38 @@ const AuthPages = () => {
     }));
   };
 
-  const handleSignInSubmit = (e) => {
+  const handleSignInSubmit = async (e) => {
     e.preventDefault();
     console.log("Sign In Data:", signInData);
     // Handle sign in logic here
+
+    if (!signInData.email || !signInData.password) {
+      alert("Please enter email and password.");
+      return;
+    }
+
+    try {
+      const response = await signInWithEmailAndPassword(
+        auth,
+        signInData.email,
+        signInData.password
+      );
+      console.log("Sign In Response:", response);
+
+      const user = response.user;
+
+      dispatch(
+        login({
+          username: user.displayName || signInData.email ,
+          email: user.email,
+        })
+      );
+
+      navigate("/builder");
+    } catch (err) {
+      alert(err.message);
+      return;
+    }
   };
 
   const handleSignUpWithGoogle = () => {

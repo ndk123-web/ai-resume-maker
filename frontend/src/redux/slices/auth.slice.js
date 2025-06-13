@@ -15,7 +15,8 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.status = true;
-      state.userData = action.payload;
+      state.userData['username'] = action.payload.username;
+      state.userData['email'] = action.payload.email;
       state.isAuthChecked = true;
     },
     logout: (state) => {
