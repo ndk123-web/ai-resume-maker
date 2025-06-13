@@ -4,43 +4,28 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/user.models.js';
 
+import admin from '../utils/firebase.js';
+
 // we need to rotate the token at each request to avoid token expiration
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
-  const accessToken =
-    req.headers['Authorization'] ||
-    req.cookies.accessToken;
-  const refreshToken = req.cookies.refreshToken;
+  const token = req.headers.authorization?.split(' ')[1];
 
-  if (!accessToken || !refreshToken) {
-    throw new ApiError(401, 'Access Token not Found');
+  if (!token) {
+    throw new ApiError(401, 'Unauthorized');
   }
 
   try {
-    const decoded = jwt.decode(accessToken.replace('Bearer ', ''), process.env.ACCESS_TOKEN_SECRET);
-
+    const decoded = await admin.auth().verifyIdToken(token);
+    console.log("Decoded: ", decoded);
     if (!decoded) {
-      throw new ApiError(401, 'Invalid Access Token');
+      throw new ApiError(401, 'Access Tpken Expired or invalid');
     }
 
-    const userId = decoded._id;
-
-    const isExistUser = await User.findById(userId).select('-password');
-
-    if (!isExistUser) {
-      throw new ApiError(401, 'User Not Exist');
-    }
-
-    // add the user in req object
-    req.user = isExistUser;
-
-    // now run further middleware or controller
+    req.user = decoded;
     next();
   } catch (err) {
-    if (err.name === 'TokenExpiredError') {
-      throw new ApiError(400, 'User Access Token has been expired');
-    }
-    throw new ApiError(400, err.message);
+    throw ApiError(500, err.message);
   }
 });
 

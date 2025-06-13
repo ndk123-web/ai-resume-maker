@@ -17,17 +17,17 @@ const ProtectedRoute = ({ children }) => {
   }, []);
 
   // Optional: Show loader until auth status is known
-  if (loading) {
-    return (
-      <div
-        className={`flex items-center bg-dark justify-center min-h-screen ${
-          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-        }`}
-      >
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6938EF]"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div
+  //       className={`flex items-center bg-dark justify-center min-h-screen ${
+  //         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+  //       }`}
+  //     >
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6938EF]"></div>
+  //     </div>
+  //   );
+  // }
 
   if (!status) {
     return <Navigate to="/auth" replace />;

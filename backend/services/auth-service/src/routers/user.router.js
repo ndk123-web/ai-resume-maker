@@ -6,8 +6,8 @@ import { registerUser, loginUser } from '../controllers/user.controller.js';
 const userRouter = Router();
 
 // for register we dont need jwt middlewar
-userRouter.post('/register-user', registerUser);
-userRouter.post('/login-user', loginUser);
+userRouter.post('/register-user', verifyJWT ,registerUser);
+userRouter.post('/login-user',  verifyJWT , loginUser);
 
 // testing jwt
 userRouter.get('/test', verifyJWT, (req, res) => {

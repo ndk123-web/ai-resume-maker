@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { motion } from "framer-motion";
 
-import { ChatHistory, ChatInput, ChatMessage , Loader } from "../../components/";
+import { ChatHistory, ChatInput, ChatMessage, Loader } from "../../components/";
 
 import { themeContext } from "../../context/context";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,7 +11,7 @@ const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
 
-  // Need to fetch from API and need to store in redux 
+  // Need to fetch from API and need to store in redux
   const [chatHistory] = useState([
     {
       id: 1,
@@ -33,16 +33,17 @@ const Dashboard = () => {
     },
   ]);
 
-  // context   
+  // context
   const { theme } = useContext(themeContext);
   // Redux State and Actions
 
   const dispatch = useDispatch();
-    const isLoading = useSelector((state) => state.loading.loading);
+  const isLoading = useSelector((state) => state.loading.loading);
   // console.log("isLoading:", isLoading);
 
-
-  // Sample chat history data
+  useEffect(() => {
+    console.log("Loading State should end: ", isLoading);
+  }, [isLoading]);
 
   const handleSendMessage = async (message) => {
     dispatch(setLoading());
@@ -78,6 +79,10 @@ const Dashboard = () => {
       setMessages((prev) => [...prev, aiMessage]);
       dispatch(unsetloading());
     }, 1500);
+
+    console.log("Before Loading End: ", isLoading);
+
+    console.log("After Loading: ", isLoading);
   };
 
   const handleNewChat = () => {

@@ -25,6 +25,7 @@ const Header = () => {
   const { theme, setTheme } = useContext(themeContext); // Your context
   const isAuth = useSelector((state) => state.auth.status);
   const username = useSelector((state) => state.auth.userData.username);
+  const email = useSelector((state) => state.auth.userData.email);
   const dispatch = useDispatch();
   const profileRef = useRef(null);
 
@@ -203,7 +204,7 @@ const Header = () => {
                       theme === "dark" ? "text-gray-300" : "text-gray-600"
                     }`}
                   >
-                    {username || "User"}
+                    {username || email || "User"}
                   </span>
                   <ChevronDown
                     className={`w-4 h-4 transition-transform duration-200 ${
@@ -343,7 +344,7 @@ const Header = () => {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
-                          {username || "User"}
+                          {username || email ||  "User"}
                         </p>
                       </div>
                       <button

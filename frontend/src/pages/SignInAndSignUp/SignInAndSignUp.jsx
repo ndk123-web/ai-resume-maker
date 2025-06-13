@@ -15,7 +15,18 @@ import {
 } from "lucide-react";
 import { themeContext } from "../../context/context";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../redux";
+
+import {
+  login,
+  setUserProfile,
+  logout,
+  removeUserProfile,
+  setLoading,
+  unsetloading,
+} from "../../redux";
+
+import { signUpWithEmail } from "../../api/signUpWithEmail.js";
+import { signInWithEmail } from "../../api/signInWithEmail.js";
 
 import app from "../../firebase/firebase";
 import {
@@ -27,7 +38,6 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { nav } from "framer-motion/client";
 
 const AuthPages = () => {
   const { theme, setTheme } = useContext(themeContext);
@@ -38,6 +48,7 @@ const AuthPages = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const isLoading = useSelector((state) => state.loading.loading);
 
   const auth = getAuth(app);
 
@@ -64,8 +75,6 @@ const AuthPages = () => {
 
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sign Up Data:", signUpData);
-    console.log("isAuth: ", isAuth);
 
     if (signUpData.password !== signUpData.confirmPassword) {
       alert("Passwords do not match!");
@@ -73,27 +82,49 @@ const AuthPages = () => {
     }
 
     try {
-      const response = await createUserWithEmailAndPassword(
+      const responseFromFirebase = await createUserWithEmailAndPassword(
         auth,
         signUpData.email,
         signUpData.password
       );
+      console.log("Sign Up Response:", responseFromFirebase);
 
-      const user = response.user;
+      const idToken = await responseFromFirebase.user.getIdToken(); // Correct
+      console.log("ID Token:", idToken);
 
-      // Dispatch login with user info
+      const backendResponse = await signUpWithEmail(idToken);
+      console.log("Backend Response:", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        alert(backendResponse.message);
+        return;
+      }
+
+      const user = backendResponse.data;
+      console.log("User:", user);
+
       dispatch(
         login({
-          username: user.displayName || signUpData.fullName || signInData.email,
-          email: user.email,
+          username: user.data.name,
+          email: user.data.email,
         })
       );
 
-      // Navigate after login state is updated
+      dispatch(
+        setUserProfile({
+          username: user.data.name,
+          email: user.data.email,
+          bio: user.data.bio,
+          fullname: user.data.fullname,
+          isPremium: user.data.isPremium,
+          avtar: user.data.avtar,
+        })
+      );
+
       navigate("/builder");
     } catch (err) {
       alert(err.message);
-      navigate("/auth"); // Only on error
+      navigate("/auth");
     }
   };
 
@@ -129,26 +160,54 @@ const AuthPages = () => {
     }
 
     try {
-      const response = await signInWithEmailAndPassword(
+      setLoading();
+      console.log("Loading State should start: ", isLoading);
+      const responseFromFirebase = await signInWithEmailAndPassword(
         auth,
         signInData.email,
         signInData.password
       );
-      console.log("Sign In Response:", response);
+      console.log("Sign in Response:", responseFromFirebase);
 
-      const user = response.user;
+      const idToken = await responseFromFirebase.user.getIdToken(); // Correct
+      console.log("ID Token:", idToken);
+
+      const backendResponse = await signInWithEmail(idToken);
+      console.log("Backend Response:", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        alert(backendResponse.message);
+        return;
+      }
+
+      const user = backendResponse.data;
+      console.log("User:", user);
 
       dispatch(
         login({
-          username: user.displayName || signInData.email ,
-          email: user.email,
+          username: user.data.name,
+          email: user.data.email,
         })
       );
+
+      dispatch(
+        setUserProfile({
+          username: user.data.name,
+          email: user.data.email,
+          bio: user.data.bio,
+          fullname: user.data.fullname,
+          isPremium: user.data.isPremium,
+          avtar: user.data.avtar,
+        })
+      );
+
+      unsetloading();
+      console.log("Loading State should End: ", isLoading);
 
       navigate("/builder");
     } catch (err) {
       alert(err.message);
-      return;
+      navigate("/auth");
     }
   };
 
@@ -436,7 +495,9 @@ const AuthPages = () => {
                       theme === "dark" ? "text-white" : "text-gray-900"
                     }`}
                   >
-                    Create your account
+                    {isLoading
+                      ? "Creating your account..."
+                      : "Create your account"}
                   </h2>
 
                   <form onSubmit={handleSignUpSubmit} className="space-y-4">
