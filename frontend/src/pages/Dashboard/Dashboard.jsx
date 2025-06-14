@@ -13,41 +13,24 @@ import {
   setCurrentSessionId,
   setPageLoading,
   unsetPageLoading,
+  fetchUserChatHistory,
 } from "../../redux";
 
 import { createNewChatSession } from "../../api/createChatSession.js";
 
 import { v4 as uuid } from "uuid";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../firebase/firebase";
 
 const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const auth = getAuth(app);
-  const pageLoading = useSelector(state=>state.loading.pageLoading);
+  const pageLoading = useSelector((state) => state.loading.pageLoading);
+  const userHistory = useSelector((state) => state.user_chat_history);
 
   // Need to fetch from API and need to store in redux
-  const [chatHistory] = useState([
-    {
-      id: 1,
-      title: "Software Engineer Resume",
-      timestamp: "2 hours ago",
-      preview: "Create a resume for software engineer position...",
-    },
-    {
-      id: 2,
-      title: "Marketing Manager CV",
-      timestamp: "1 day ago",
-      preview: "Generate a CV for marketing manager role...",
-    },
-    {
-      id: 3,
-      title: "Data Scientist Resume",
-      timestamp: "3 days ago",
-      preview: "Build resume for data scientist position...",
-    },
-  ]);
+  const [chatHistory, setChatHistory] = useState([]);
 
   // context
   const { theme, setTheme } = useContext(themeContext);
@@ -63,6 +46,21 @@ const Dashboard = () => {
     localStorage.getItem("theme") === "dark"
       ? setTheme("dark")
       : setTheme("light");
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        console.log("User token:", token);
+        dispatch(fetchUserChatHistory({ token })); // pass token if needed
+      } else {
+        console.log("No user is signed in");
+        // Redirect to login or handle anonymous state
+      }
+    });
+
+    return () => unsubscribe(); // clean up the listener on unmount
   }, []);
 
   const handleSendMessage = async (message) => {
@@ -106,27 +104,36 @@ const Dashboard = () => {
   };
 
   const handleNewChat = async () => {
+    dispatch(setPageLoading());
+
     const newSessionId = uuid();
     console.log("New Session ID: ", newSessionId);
 
-    dispatch(setPageLoading());
-    dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
+    try {
+      dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
 
-    const idToken = await auth.currentUser.getIdToken();
-    
-    console.log("Current User ID Token: ", idToken);
-    const backendResponse = await createNewChatSession(newSessionId, idToken);
-    console.log("Backend Response: ", backendResponse);
+      const idToken = await auth.currentUser.getIdToken();
 
-    if (backendResponse.status !== 200 && backendResponse.status !== 201) {
-      console.log("Error creating new chat session: ", backendResponse.message);
-      return;
+      console.log("Current User ID Token: ", idToken);
+
+      const backendResponse = await createNewChatSession(newSessionId, idToken);
+      console.log("Backend Response: ", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        console.log(
+          "Error creating new chat session: ",
+          backendResponse.message
+        );
+        return;
+      }
+
+      setMessages([]);
+      setCurrentChat(null);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      dispatch(unsetPageLoading());
     }
-
-    dispatch(unsetPageLoading());
-
-    setMessages([]);
-    setCurrentChat(null);
   };
 
   const handleChatSelect = (chat) => {
@@ -143,20 +150,11 @@ const Dashboard = () => {
   };
 
   return (
-
     <div
       className={`min-h-screen pt-16 transition-colors duration-300 ${
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
-      {/* { pageLoading ? 
-        <div className="items-center justify-center">
-          <div className=""></div>
-        <div/>
-      : 
-      
-       } */}
-
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Sidebar - Chat History */}
         <ChatHistory

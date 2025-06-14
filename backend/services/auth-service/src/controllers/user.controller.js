@@ -99,6 +99,8 @@ const createChatSession = asyncHandler(async (req, res) => {
     title: (prompts.length > 0 && prompts[0].userPrompt.substring(0, 15)) || 'untitled',
   });
 
+  console.log('New Chat Session: ', newChatSession);
+
   if (!newChatSession) {
     throw new ApiError(400, 'Chat Session Not created');
   }
@@ -106,4 +108,18 @@ const createChatSession = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, newChatSession, 'Created Chat Session successfully'));
 });
 
-export { registerUser, loginUser, createChatSession };
+const getUserChatHistory = asyncHandler(async (req, res) => {
+  const user = req.user;
+  console.log('Firebase User in ChatHistory: ', user);
+
+  const existUser = await User.findOne({ uid: user.uid });
+  if (!existUser) {
+    throw new ApiError(400, 'User Not registered');
+  }
+
+  const chatHistory = await chatSession.find({ user: existUser._id });
+
+  res.status(200).json(new ApiResponse(200, chatHistory, 'Chat History'));
+});
+
+export { registerUser, loginUser, createChatSession, getUserChatHistory };

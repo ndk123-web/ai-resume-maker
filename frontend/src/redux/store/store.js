@@ -38,12 +38,23 @@ const authPersistConfig = {
 };
 const authPersistedReducer = persistReducer(authPersistConfig, authReducer);
 
+// Chat History Config Reducer
+const chatHistoryPersistConfig = {
+  key: "user_chat_history",
+  version: 1,
+  storage: storage,
+};
+const chatHistoryPersistedReducer = persistReducer(
+  chatHistoryPersistConfig,
+  userChatSliceReducer
+);
+
 // Root Reducer
 const rootReducer = combineReducers({
   auth: authPersistedReducer,
   user: userPersistedReducer,
   loading: loadingSlicer,
-  user_chat_history: userChatSliceReducer,
+  user_chat_history: chatHistoryPersistedReducer,
   current_session: currentSessionSliceReducer,
   current_session_id: currentSessionIdPersistedReducer,
 });

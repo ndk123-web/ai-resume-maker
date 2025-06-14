@@ -7,9 +7,9 @@ import { themeContext } from "../../context/context";
 const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.auth.status);
-  const loading = useSelector((state) => state.loading.loading);
+  const pageLoading = useSelector((state) => state.loading.pageLoading);
   const { theme, setTheme } = useContext(themeContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // useEffect(() => {
   //   localStorage.getItem("theme") === "dark"
@@ -30,13 +30,42 @@ const ProtectedRoute = ({ children }) => {
   //   );
   // }
 
-  if (!status) {
-    return <Navigate to={'/auth'} replace />
+  // if (pageLoading) {
+  //   return (
+  //     <div
+  //       className={`flex items-center bg-dark justify-center min-h-screen ${
+  //         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+  //       }`}
+  //     >
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6938EF]"></div>
+  //     </div>
+  //   );
+  // }
+
+  // if (!status) {
+  //   return <Navigate to={"/auth"} replace />;
+  // }
+
+  // if (status) {
+  //   return <>{children}</>;
+  // }
+  if (pageLoading) {
+    return (
+      <div
+        className={`flex items-center justify-center min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } `}
+      >
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6938EF]"></div>
+      </div>
+    );
   }
 
-  if (status) {
-    return <>{children}</>;
+  if (!status) {
+    return <Navigate to="/auth" replace />;
   }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;
