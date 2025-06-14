@@ -152,6 +152,8 @@ const AuthPages = () => {
     } catch (err) {
       alert(err.message);
       navigate("/auth");
+    } finally {
+      dispatch(unsetEmailLoading());
     }
   };
 
@@ -186,7 +188,7 @@ const AuthPages = () => {
       console.log("Backend Response:", backendResponse);
 
       if (backendResponse.status !== 200 && backendResponse.status !== 201) {
-        // dont need to delete the user if 
+        // dont need to delete the user if
         // await responseFromFirebase.user.delete();
         alert(backendResponse.message);
         return;
@@ -221,25 +223,12 @@ const AuthPages = () => {
     } catch (err) {
       alert(err.message);
       navigate("/auth");
+    } finally {
+      dispatch(unsetEmailLoading());
     }
   };
 
-  const handleSignInChange = async (e) => {
-    const { name, value, type, checked } = e.target;
-    setSignInData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSignUpChange = async (e) => {
-    const { name, value, type, checked } = e.target;
-    setSignUpData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
+  // Sign Up with Google
   const handleSignUpWithGoogle = async () => {
     dispatch(setGoogleLoading());
 
@@ -299,8 +288,73 @@ const AuthPages = () => {
     }
   };
 
-  const handleSignInWithGoogle = () => {
+  const handleSignInWithGoogle = async () => {
     // Handle sign in with Google logic here
+
+    dispatch(setGoogleLoading());
+
+    try {
+      const googleProvider = new GoogleAuthProvider();
+      googleProvider.setCustomParameters({ prompt: "select_account" });
+
+      const responseFromFirebase = await signInWithPopup(auth, googleProvider);
+
+      const idToken = await responseFromFirebase.user.getIdToken();
+      console.log("ID Token:", idToken);
+
+      const backendResponse = await signInWithEmail(idToken);
+      console.log("Backend Response:", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        alert(backendResponse.message);
+        return;
+      }
+
+      const user = backendResponse.data;
+
+      dispatch(
+        login({
+          username: user.data.name,
+          email: user.data.email,
+        })
+      );
+
+      dispatch(
+        setUserProfile({
+          username: user.data.name,
+          email: user.data.email,
+          bio: user.data.bio,
+          fullname: user.data.fullname,
+          isPremium: user.data.isPremium,
+          avatar: user.data.avatar,
+        })
+      );
+
+      dispatch(unsetGoogleLoading());
+
+      navigate("/builder");
+    } catch (err) {
+      alert(err.message);
+      return;
+    } finally {
+      dispatch(unsetGoogleLoading());
+    }
+  };
+
+  const handleSignInChange = async (e) => {
+    const { name, value, type, checked } = e.target;
+    setSignInData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSignUpChange = async (e) => {
+    const { name, value, type, checked } = e.target;
+    setSignUpData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSignInWithGithub = () => {
@@ -821,7 +875,9 @@ const AuthPages = () => {
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={handleSignUpWithGoogle}
+                  onClick={
+                    isSignUp ? handleSignUpWithGoogle : handleSignInWithGoogle
+                  }
                 >
                   {googleLoading ? (
                     <div className="flex items-center gap-2">
