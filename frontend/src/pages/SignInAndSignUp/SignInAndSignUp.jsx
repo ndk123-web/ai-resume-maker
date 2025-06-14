@@ -341,6 +341,118 @@ const AuthPages = () => {
     }
   };
 
+  const handleSignInWithGithub = async () => {
+    dispatch(setGithubLoading());
+
+    try {
+      const githubProvider = new GithubAuthProvider();
+      githubProvider.setCustomParameters({ prompt: "select_account" });
+
+      const responseFromFirebase = await signInWithPopup(auth, githubProvider);
+      console.log("responseFromFirebase:", responseFromFirebase);
+
+      const idToken = await responseFromFirebase.user.getIdToken();
+      console.log("ID Token:", idToken);
+
+      const backendResponse = await signInWithEmail(idToken);
+      console.log("Backend Response:", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        alert(backendResponse.message);
+        return;
+      }
+
+      const user = backendResponse.data;
+
+      dispatch(
+        login({
+          username: user.data.name,
+          email: user.data.email,
+        })
+      );
+
+      dispatch(
+        setUserProfile({
+          username: user.data.name,
+          email: user.data.email,
+          bio: user.data.bio,
+          fullname: user.data.fullname,
+          isPremium: user.data.isPremium,
+          avatar: user.data.avatar,
+        })
+      );
+
+      navigate("/builder");
+    } catch (err) {
+      console.log(err);
+      if (auth.currentUser) {
+        auth.currentUser.delete();
+      }
+      alert("Something went wrong: " + err.message);
+    } finally {
+      dispatch(unsetGithubLoading());
+    }
+  };
+
+  const handleSignUpWithGithub = async () => {
+    // Handle sign in with Chrome logic here
+    dispatch(setGithubLoading());
+
+    try {
+      const githubProvider = new GithubAuthProvider();
+      githubProvider.setCustomParameters({ prompt: "select_account" });
+
+      const responseFromFirebase = await signInWithPopup(auth, githubProvider);
+      console.log("responseFromFirebase:", responseFromFirebase);
+
+      const idToken = await responseFromFirebase.user.getIdToken();
+      console.log("ID Token:", idToken);
+
+      const backendResponse = await signUpWithEmail(idToken);
+      console.log("Backend Response:", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        // if any error then delete the user from firebase
+        await responseFromFirebase.user.delete();
+        alert(backendResponse.message);
+        return;
+      }
+
+      const user = await backendResponse.data;
+
+      dispatch(
+        login({
+          username: user.data.name,
+          email: user.data.email,
+        })
+      );
+
+      dispatch(
+        setUserProfile({
+          username: user.data.name,
+          email: user.data.email,
+          bio: user.data.bio,
+          fullname: user.data.fullname,
+          isPremium: user.data.isPremium,
+          avatar: user.data.avatar,
+        })
+      );
+
+      dispatch(unsetGithubLoading());
+
+      navigate("/builder");
+    } catch (error) {
+      console.log(error);
+      if (auth.currentUser) {
+        auth.currentUser.delete();
+      }
+      alert("Something went wrong: " + error.message);
+      return;
+    } finally {
+      dispatch(unsetGithubLoading());
+    }
+  };
+
   const handleSignInChange = async (e) => {
     const { name, value, type, checked } = e.target;
     setSignInData((prev) => ({
@@ -355,14 +467,6 @@ const AuthPages = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-  };
-
-  const handleSignInWithGithub = () => {
-    // Handle sign in with Github logic here
-  };
-
-  const handleSignInWithChrome = () => {
-    // Handle sign in with Chrome logic here
   };
 
   return (
@@ -861,9 +965,20 @@ const AuthPages = () => {
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={
+                    isSignUp ? handleSignUpWithGithub : handleSignInWithGithub
+                  }
                 >
-                  <Github className="w-5 h-5" />
-                  <span className="ml-2">GitHub</span>
+                  {githubLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-t-2 border purple-500 border-t-pink-500 rounded-full animate-spin"></div>
+                    </div>
+                  ) : (
+                    <>
+                      <Github className="w-5 h-5" />
+                      <span className="ml-2">GitHub</span>
+                    </>
+                  )}
                 </motion.button>
 
                 <motion.button

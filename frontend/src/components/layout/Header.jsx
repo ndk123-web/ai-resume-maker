@@ -29,6 +29,7 @@ const Header = () => {
   const avatar = useSelector((state) => state.user.avatar);
   const dispatch = useDispatch();
   const profileRef = useRef(null);
+  const fullname = useSelector((state) => state.user.fullname);
 
   console.log("Avatar is: ", avatar);
 
@@ -212,7 +213,7 @@ const Header = () => {
                       theme === "dark" ? "text-gray-300" : "text-gray-600"
                     }`}
                   >
-                    {username || email || "User"}
+                    {fullname || username || email || "User"}
                   </span>
                   <ChevronDown
                     className={`w-4 h-4 transition-transform duration-200 ${
@@ -359,7 +360,7 @@ const Header = () => {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
-                          {username || email || "User"}
+                          {fullname || username || email || "User"}
                         </p>
                       </div>
                       <button

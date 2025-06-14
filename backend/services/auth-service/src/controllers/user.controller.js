@@ -37,7 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
   console.log('Firebase User: ', firebaseUser);
 
   // Check if user already exists
-  const existingUser = await User.findOne({ email: firebaseUser.email });
+  const existingUser = await User.findOne({ uid: firebaseUser.uid });
   if (existingUser) {
     throw new ApiError(400, 'User already registered');
   }
@@ -60,12 +60,12 @@ const loginUser = asyncHandler(async (req, res) => {
   console.log('Firebase User: ', firebaseUser);
 
   // Check if user already exists
-  const existingUser = await User.findOne({ email: firebaseUser.email });
+  const existingUser = await User.findOne({ uid: firebaseUser.uid });
   if (!existingUser) {
     throw new ApiError(400, 'User Not registered');
   }
 
-  res.status(201).json(new ApiResponse(201, existingUser, 'User registered successfully'));
+  res.status(201).json(new ApiResponse(201, existingUser, 'User Login successfully'));
 });
 
 // Testing JWT
