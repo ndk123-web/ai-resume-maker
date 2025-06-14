@@ -15,7 +15,7 @@ import {
   Crown,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux";
+import { logout, removeUserProfile } from "../../redux";
 import { themeContext } from "../../context/context";
 import { Link, useLocation } from "react-router-dom";
 
@@ -26,8 +26,11 @@ const Header = () => {
   const isAuth = useSelector((state) => state.auth.status);
   const username = useSelector((state) => state.auth.userData.username);
   const email = useSelector((state) => state.auth.userData.email);
+  const avatar = useSelector((state) => state.user.avatar);
   const dispatch = useDispatch();
   const profileRef = useRef(null);
+
+  console.log("Avatar is: ", avatar);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -37,6 +40,7 @@ const Header = () => {
   // Handle sign out
   const handleSignOut = () => {
     dispatch(logout());
+    dispatch(removeUserProfile());
     setIsProfileOpen(false);
   };
 
@@ -189,15 +193,19 @@ const Header = () => {
                   whileTap={{ scale: 0.95 }}
                 >
                   {/* Default Avatar */}
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      theme === "dark"
-                        ? "bg-gray-700 text-gray-300"
-                        : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    <User className="w-4 h-4" />
-                  </div>
+                  {avatar ? (
+                    <img className="w-8 h-8 rounded-full" src={avatar}></img>
+                  ) : (
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        theme === "dark"
+                          ? "bg-gray-700 text-gray-300"
+                          : "bg-gray-200 text-gray-600"
+                      }`}
+                    >
+                      <User className="w-4 h-4" />
+                    </div>
+                  )}
                   {/* Username */}
                   <span
                     className={`text-sm font-medium truncate max-w-20 ${
@@ -340,11 +348,18 @@ const Header = () => {
                             : "bg-gray-200 text-gray-600"
                         }`}
                       >
-                        <User className="w-4 h-4" />
+                        {avatar ? (
+                          <img
+                            className="w-8 h-8 rounded-full"
+                            src={avatar}
+                          ></img>
+                        ) : (
+                          <User className="w-4 h-4" />
+                        )}
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
-                          {username || email ||  "User"}
+                          {username || email || "User"}
                         </p>
                       </div>
                       <button

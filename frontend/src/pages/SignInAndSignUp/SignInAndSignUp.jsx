@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sun,
@@ -11,11 +11,15 @@ import {
   User,
   ArrowRight,
   Github,
-  Chrome,
+  FireExtinguisher,
+  DiscIcon,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 import { themeContext } from "../../context/context";
 import { useDispatch, useSelector } from "react-redux";
 
+// REDUX
 import {
   login,
   setUserProfile,
@@ -23,11 +27,21 @@ import {
   removeUserProfile,
   setLoading,
   unsetloading,
+  setGithubLoading,
+  unsetGithubLoading,
+  setGoogleLoading,
+  unsetGoogleLoading,
+  setPageLoading,
+  unsetPageLoading,
+  setEmailLoading,
+  unsetEmailLoading,
 } from "../../redux";
 
+// APIS
 import { signUpWithEmail } from "../../api/signUpWithEmail.js";
 import { signInWithEmail } from "../../api/signInWithEmail.js";
 
+// FIREBASE
 import app from "../../firebase/firebase";
 import {
   getAuth,
@@ -36,19 +50,23 @@ import {
   GoogleAuthProvider,
   GithubAuthProvider,
   onAuthStateChanged,
+  signInWithPopup,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 
 const AuthPages = () => {
   const { theme, setTheme } = useContext(themeContext);
   const dispatch = useDispatch();
   const isAuth = useSelector((state) => state.auth.status);
+  const isLoading = useSelector((state) => state.loading.loading);
+  const emailLoading = useSelector((state) => state.loading.emailLoading);
+  const googleLoading = useSelector((state) => state.loading.googleLoading);
+  const githubLoading = useSelector((state) => state.loading.githubLoading);
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
-  const isLoading = useSelector((state) => state.loading.loading);
 
   const auth = getAuth(app);
 
@@ -73,8 +91,12 @@ const AuthPages = () => {
       : setTheme("light");
   }, []);
 
+  // Sign Up Logic
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
+
+    // Start the Loading Animation for the Sign Up Page
+    dispatch(setEmailLoading());
 
     if (signUpData.password !== signUpData.confirmPassword) {
       alert("Passwords do not match!");
@@ -96,6 +118,8 @@ const AuthPages = () => {
       console.log("Backend Response:", backendResponse);
 
       if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        // if there is any error then delete the user from firebase
+        await responseFromFirebase.user.delete();
         alert(backendResponse.message);
         return;
       }
@@ -117,9 +141,12 @@ const AuthPages = () => {
           bio: user.data.bio,
           fullname: user.data.fullname,
           isPremium: user.data.isPremium,
-          avtar: user.data.avtar,
+          avatar: user.data.avatar,
         })
       );
+
+      // Stop the Loading Animation for the Sign Up Page
+      dispatch(unsetEmailLoading());
 
       navigate("/builder");
     } catch (err) {
@@ -128,31 +155,14 @@ const AuthPages = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-    localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
-  };
-
-  const handleSignInChange = async (e) => {
-    const { name, value, type, checked } = e.target;
-    setSignInData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSignUpChange = async (e) => {
-    const { name, value, type, checked } = e.target;
-    setSignUpData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
+  // Sign In Logic
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
     console.log("Sign In Data:", signInData);
     // Handle sign in logic here
+
+    // Start the Loading Animation for the Sign In Page
+    dispatch(setEmailLoading());
 
     if (!signInData.email || !signInData.password) {
       alert("Please enter email and password.");
@@ -176,6 +186,8 @@ const AuthPages = () => {
       console.log("Backend Response:", backendResponse);
 
       if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        // dont need to delete the user if 
+        // await responseFromFirebase.user.delete();
         alert(backendResponse.message);
         return;
       }
@@ -197,11 +209,12 @@ const AuthPages = () => {
           bio: user.data.bio,
           fullname: user.data.fullname,
           isPremium: user.data.isPremium,
-          avtar: user.data.avtar,
+          avatar: user.data.avatar,
         })
       );
 
-      unsetloading();
+      // Stop the Loading Animation for the Sign In Page
+      dispatch(unsetEmailLoading());
       console.log("Loading State should End: ", isLoading);
 
       navigate("/builder");
@@ -211,8 +224,79 @@ const AuthPages = () => {
     }
   };
 
-  const handleSignUpWithGoogle = () => {
-    // Handle sign up with Google logic here
+  const handleSignInChange = async (e) => {
+    const { name, value, type, checked } = e.target;
+    setSignInData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSignUpChange = async (e) => {
+    const { name, value, type, checked } = e.target;
+    setSignUpData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSignUpWithGoogle = async () => {
+    dispatch(setGoogleLoading());
+
+    try {
+      const googleProvider = new GoogleAuthProvider();
+      const responseFromFirebase = await signInWithPopup(auth, googleProvider);
+
+      const idToken = await responseFromFirebase.user.getIdToken();
+      console.log("ID Token:", idToken);
+
+      const backendResponse = await signUpWithEmail(idToken);
+      console.log("Backend Response:", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        // Backend failed, delete Firebase user
+        await responseFromFirebase.user.delete();
+        alert(backendResponse.message);
+        return;
+      }
+
+      const user = backendResponse.data;
+
+      dispatch(
+        login({
+          username: user.data.name,
+          email: user.data.email,
+        })
+      );
+
+      dispatch(
+        setUserProfile({
+          username: user.data.name,
+          email: user.data.email,
+          bio: user.data.bio,
+          fullname: user.data.fullname,
+          isPremium: user.data.isPremium,
+          avatar: user.data.avatar,
+        })
+      );
+
+      navigate("/builder");
+    } catch (error) {
+      console.error("Google Signup Error:", error);
+
+      // Optional: Firebase user cleanup on partial creation
+      if (auth.currentUser) {
+        try {
+          await auth.currentUser.delete();
+        } catch (cleanupError) {
+          console.warn("Cleanup Error:", cleanupError);
+        }
+      }
+
+      alert("Something went wrong: " + error.message);
+    } finally {
+      dispatch(unsetGoogleLoading());
+    }
   };
 
   const handleSignInWithGoogle = () => {
@@ -233,34 +317,6 @@ const AuthPages = () => {
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
-      {/* Theme Toggle Button */}
-      <motion.button
-        onClick={toggleTheme}
-        className={`fixed top-6 right-6 p-3 rounded-full z-10 transition-all duration-200 ${
-          theme === "dark"
-            ? "bg-gray-800 text-yellow-400 hover:bg-gray-700 shadow-lg shadow-gray-900/50"
-            : "bg-white text-gray-700 hover:bg-gray-50 shadow-lg shadow-gray-200/50"
-        }`}
-        whileHover={{ scale: 1.1, rotate: 180 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={theme}
-            initial={{ opacity: 0, rotate: -180 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            exit={{ opacity: 0, rotate: 180 }}
-            transition={{ duration: 0.3 }}
-          >
-            {theme === "dark" ? (
-              <Sun className="w-6 h-6" />
-            ) : (
-              <Moon className="w-6 h-6" />
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </motion.button>
-
       {/* Main Container */}
       <div className="flex items-center justify-center min-h-screen p-4">
         <motion.div
@@ -477,8 +533,17 @@ const AuthPages = () => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <span>Sign In</span>
-                      <ArrowRight className="w-5 h-5" />
+                      {emailLoading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 border-2 border-t-2 border-purple-500 border-t-pink-500 rounded-full animate-spin"></div>
+                          <span className="ml-2">Signing in ..</span>
+                        </div>
+                      ) : (
+                        <>
+                          <span>Sign In</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </>
+                      )}
                     </motion.button>
                   </form>
                 </motion.div>
@@ -495,9 +560,14 @@ const AuthPages = () => {
                       theme === "dark" ? "text-white" : "text-gray-900"
                     }`}
                   >
-                    {isLoading
-                      ? "Creating your account..."
-                      : "Create your account"}
+                    {emailLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-t-2 border purple-500 border-t-pink-500 rounded-full animate-spin"></div>
+                        <span className="ml-2">Signing up ..</span>
+                      </div>
+                    ) : (
+                      "Create your account"
+                    )}
                   </h2>
 
                   <form onSubmit={handleSignUpSubmit} className="space-y-4">
@@ -751,9 +821,18 @@ const AuthPages = () => {
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={handleSignUpWithGoogle}
                 >
-                  <Chrome className="w-5 h-5" />
-                  <span className="ml-2">Google</span>
+                  {googleLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-t-2 border purple-500 border-t-pink-500 rounded-full animate-spin"></div>
+                    </div>
+                  ) : (
+                    <>
+                      <FcGoogle className="w-5 h-5" />
+                      <span className="ml-2">Google</span>
+                    </>
+                  )}
                 </motion.button>
               </div>
             </div>

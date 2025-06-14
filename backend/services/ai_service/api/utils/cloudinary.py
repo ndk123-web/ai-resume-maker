@@ -15,10 +15,12 @@ async def upload_image_from_url(file_path,filename):
     )
     result = cloudinary.uploader.upload(
         file_path,
+        folder="ai-resume",
         public_id=filename,
         unique_filename=False,
         overwrite=True,
-        resource_type="raw"
+        resource_type="raw",
+        access_mode="public"
     )
 
     src_url = CloudinaryImage(filename).build_url()

@@ -25,5 +25,4 @@ const signUpWithEmail = async (token) => {
     };
   }
 };
-
-export { signUpWithEmail };
+export { signUpWithEmail};

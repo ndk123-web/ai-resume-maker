@@ -6,7 +6,7 @@ const initialState = {
   bio: null,
   fullname: null,
   isPremium: null,
-  avtar: null,
+  avatar: null,
 };
 
 const userSlice = createSlice({
@@ -18,6 +18,7 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.bio = action.payload.bio;
       state.fullname = action.payload.fullname;
+      state.avatar = action.payload.avatar;
       return state;
     },
     updateUserProfile: (state, action) => {
@@ -35,11 +36,12 @@ const userSlice = createSlice({
       state.bio = null;
       state.fullname = null;
       state.isPremium = null;
-      state.avtar = null;
+      state.avatar = null;
       return state;
     },
   },
 });
 
-export const { setUserProfile, updateUserProfile , removeUserProfile } = userSlice.actions;
+export const { setUserProfile, updateUserProfile, removeUserProfile } =
+  userSlice.actions;
 export default userSlice.reducer;

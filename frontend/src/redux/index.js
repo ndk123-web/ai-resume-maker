@@ -1,6 +1,19 @@
 import { store, persistor } from "./store/store.js";
 import { login, logout } from "./slices/auth.slice.js";
-import { setLoading, unsetloading } from "./slices/loading.slice";
+import {
+  setLoading,
+  unsetloading,
+  setGithubLoading,
+  unsetGithubLoading,
+  setGoogleLoading,
+  unsetGoogleLoading,
+  setPageLoading,
+  unsetPageLoading,
+  setChatLoading,
+  unsetChatLoading,
+  setEmailLoading,
+  unsetEmailLoading,
+} from "./slices/loading.slice";
 import {
   setUserProfile,
   removeUserProfile,
@@ -17,4 +30,14 @@ export {
   setUserProfile,
   setLoading,
   unsetloading,
+  setGithubLoading,
+  unsetGithubLoading,
+  setGoogleLoading,
+  unsetGoogleLoading,
+  setPageLoading,
+  unsetPageLoading,
+  setChatLoading,
+  unsetChatLoading,
+  setEmailLoading,
+  unsetEmailLoading,
 };
