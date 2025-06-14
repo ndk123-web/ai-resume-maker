@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, current } from "@reduxjs/toolkit";
 import { combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
@@ -9,23 +9,34 @@ import userReducer from "../slices/user.slice.js";
 import loadingSlicer from "../slices/loading.slice.js";
 import userChatSliceReducer from "../slices/user_chat_history.slice.js";
 import currentSessionSliceReducer from "../slices/current_session.slice.js";
-import { version } from "react";
+import currentSessionIdSliceReducer from "../slices/current_session_id.js";
 
 // User Config Reducer
 const userPersistConfig = {
-  key : "user",
-  version : 1,
-  storage : storage
-}
-const userPersistedReducer = persistReducer(userPersistConfig,userReducer)
+  key: "user",
+  version: 1,
+  storage: storage,
+};
+const userPersistedReducer = persistReducer(userPersistConfig, userReducer);
+
+// Current Session Id Config Reducer 
+const currentSessionIdPersistConfig = {
+  key: "currentSessionId",
+  version: 1,
+  storage: storage,
+};
+const currentSessionIdPersistedReducer = persistReducer(
+  currentSessionIdPersistConfig,
+  currentSessionIdSliceReducer
+);
 
 // Auth Config Reducer
 const authPersistConfig = {
-  key : "auth",
-  version : 1,
-  storage : storage
-}
-const authPersistedReducer = persistReducer(authPersistConfig,authReducer)
+  key: "auth",
+  version: 1,
+  storage: storage,
+};
+const authPersistedReducer = persistReducer(authPersistConfig, authReducer);
 
 // Root Reducer
 const rootReducer = combineReducers({
@@ -34,6 +45,7 @@ const rootReducer = combineReducers({
   loading: loadingSlicer,
   user_chat_history: userChatSliceReducer,
   current_session: currentSessionSliceReducer,
+  current_session_id: currentSessionIdPersistedReducer,
 });
 
 const store = configureStore({

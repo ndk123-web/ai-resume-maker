@@ -5,11 +5,27 @@ import { ChatHistory, ChatInput, ChatMessage, Loader } from "../../components/";
 
 import { themeContext } from "../../context/context";
 import { useSelector, useDispatch } from "react-redux";
-import { setLoading, unsetloading } from "../../redux";
+import {
+  setLoading,
+  unsetloading,
+  setChatLoading,
+  unsetChatLoading,
+  setCurrentSessionId,
+  setPageLoading,
+  unsetPageLoading,
+} from "../../redux";
+
+import { createNewChatSession } from "../../api/createChatSession.js";
+
+import { v4 as uuid } from "uuid";
+import { getAuth } from "firebase/auth";
+import app from "../../firebase/firebase";
 
 const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
+  const auth = getAuth(app);
+  const pageLoading = useSelector(state=>state.loading.pageLoading);
 
   // Need to fetch from API and need to store in redux
   const [chatHistory] = useState([
@@ -34,16 +50,19 @@ const Dashboard = () => {
   ]);
 
   // context
-  const { theme , setTheme } = useContext(themeContext);
+  const { theme, setTheme } = useContext(themeContext);
   // Redux State and Actions
 
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.loading.loading);
   // console.log("isLoading:", isLoading);
 
+  // console.log("currentSessionId:", currentSessionId);
+
   useEffect(() => {
-    localStorage.getItem('theme') === 'dark' ?
-    setTheme('dark') : setTheme('light')
+    localStorage.getItem("theme") === "dark"
+      ? setTheme("dark")
+      : setTheme("light");
   }, []);
 
   const handleSendMessage = async (message) => {
@@ -86,7 +105,26 @@ const Dashboard = () => {
     console.log("After Loading: ", isLoading);
   };
 
-  const handleNewChat = () => {
+  const handleNewChat = async () => {
+    const newSessionId = uuid();
+    console.log("New Session ID: ", newSessionId);
+
+    dispatch(setPageLoading());
+    dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
+
+    const idToken = await auth.currentUser.getIdToken();
+    
+    console.log("Current User ID Token: ", idToken);
+    const backendResponse = await createNewChatSession(newSessionId, idToken);
+    console.log("Backend Response: ", backendResponse);
+
+    if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+      console.log("Error creating new chat session: ", backendResponse.message);
+      return;
+    }
+
+    dispatch(unsetPageLoading());
+
     setMessages([]);
     setCurrentChat(null);
   };
@@ -105,11 +143,20 @@ const Dashboard = () => {
   };
 
   return (
+
     <div
       className={`min-h-screen pt-16 transition-colors duration-300 ${
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
+      {/* { pageLoading ? 
+        <div className="items-center justify-center">
+          <div className=""></div>
+        <div/>
+      : 
+      
+       } */}
+
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Sidebar - Chat History */}
         <ChatHistory

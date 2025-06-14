@@ -10,7 +10,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
-import { Loader } from '../'
+import { Loader } from "../";
 
 const ChatMessage = ({ message, theme }) => {
   const [copied, setCopied] = useState(false);
@@ -88,10 +88,9 @@ const ChatMessage = ({ message, theme }) => {
               : "bg-white text-gray-900 rounded-bl-md border border-gray-200 shadow-sm"
           }`}
         >
-
           {/* Chat Loader */}
           {isLoading ? (
-            <Loader theme={theme}/>
+            <Loader theme={theme} />
           ) : (
             <div className="prose prose-sm max-w-none">
               <p className="whitespace-pre-wrap leading-relaxed">

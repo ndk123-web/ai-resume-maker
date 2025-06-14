@@ -3,6 +3,8 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { z } from 'zod';
 import { ApiError } from '../utils/ApiError.js';
 import { User } from '../models/user.models.js';
+import { Prompt } from '../models/prompt.model.js';
+import { chatSession } from '../models/chatsession.model.js';
 
 // use of zod here for validation
 const loginAndRegisterSchema = z.object({
@@ -68,6 +70,40 @@ const loginUser = asyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, existingUser, 'User Login successfully'));
 });
 
-// Testing JWT
+const createChatSession = asyncHandler(async (req, res) => {
+  const user = req.user; // from verifyJWT
+  console.log('Firebase User: ', user);
 
-export { registerUser, loginUser };
+  const { sessionId } = req.body;
+
+  const existingUser = await User.findOne({ uid: user.uid });
+  if (!existingUser) {
+    throw new ApiError(400, 'User Not registered');
+  }
+
+  const existUniqueChatSession = await chatSession.find({
+    $and: [{ user: existingUser._id }, { sessionId: sessionId }],
+  });
+
+  if (existUniqueChatSession.length > 0) {
+    throw new ApiError(400, 'Chat Session already exist');
+  }
+
+  const prompts = await Prompt.find({
+    $and: [{ user: existingUser._id }, { sessionId: sessionId }],
+  });
+
+  const newChatSession = await chatSession.create({
+    user: existingUser._id,
+    sessionId: sessionId,
+    title: (prompts.length > 0 && prompts[0].userPrompt.substring(0, 15)) || 'untitled',
+  });
+
+  if (!newChatSession) {
+    throw new ApiError(400, 'Chat Session Not created');
+  }
+
+  res.status(200).json(new ApiResponse(200, newChatSession, 'Created Chat Session successfully'));
+});
+
+export { registerUser, loginUser, createChatSession };

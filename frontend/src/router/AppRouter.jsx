@@ -30,9 +30,8 @@ const router = createBrowserRouter([
     path: "/builder",
     element: (
       <ProtectedRoute>
-        <MainLayout>
-          <Dashboard />
-        </MainLayout>
+        <Header />
+        <Dashboard />
       </ProtectedRoute>
     ),
   },
@@ -47,9 +46,7 @@ const router = createBrowserRouter([
   {
     path: "/auth",
     element: (
-      <div
-        className={`w-full mt-5 overflow-x-hidden`}
-      >
+      <div className={`w-full mt-5 overflow-x-hidden`}>
         <Header />
         <div className="w-full mt-10 overflow-x-hidden">
           <AuthPages />
@@ -68,15 +65,15 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path : "/protected",
-    element : (
+    path: "/protected",
+    element: (
       <ProtectedRoute>
         <MainLayout>
           <Dashboard />
         </MainLayout>
       </ProtectedRoute>
-    )
-  }
+    ),
+  },
 ]);
 
 export default router;
