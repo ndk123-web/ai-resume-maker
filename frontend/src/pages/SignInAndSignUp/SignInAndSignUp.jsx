@@ -85,11 +85,11 @@ const AuthPages = () => {
     agreeToTerms: false,
   });
 
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
 
   // Sign Up Logic
   const handleSignUpSubmit = async (e) => {

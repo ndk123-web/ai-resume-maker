@@ -9,11 +9,12 @@ import { useEffect } from "react";
 const TestiMonals = ({ theme, testimonials }) => {
   const { setTheme } = useContext(themeContext);
 
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
   return (
     <>
       <section className="py-20 px-4 sm:px-6 lg:px-8">

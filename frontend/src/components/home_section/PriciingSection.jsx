@@ -38,11 +38,12 @@ import { HeroSection } from "../../components/";
 const PriciingSection = () => {
   const { setTheme } = useContext(themeContext);
 
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
+  
   const pricingPlans = [
     {
       name: "Free",

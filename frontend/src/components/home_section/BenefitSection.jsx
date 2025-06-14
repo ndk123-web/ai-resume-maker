@@ -39,11 +39,11 @@ const BenefitSection = ({ theme, benefits }) => {
 
   const { setTheme } = useContext(themeContext);
 
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
   
   return (
     <>

@@ -38,11 +38,11 @@ import { HeroSection } from "../../components/";
 const FeatureSection = ({ theme, features }) => {
   const { setTheme } = useContext(themeContext);
 
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
 
   return (
     <>

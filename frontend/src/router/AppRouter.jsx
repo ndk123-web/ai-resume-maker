@@ -48,11 +48,7 @@ const router = createBrowserRouter([
     path: "/auth",
     element: (
       <div
-        className={`w-full mt-5 overflow-x-hidden ${
-          localStorage.getItem("theme") === "dark"
-            ? "bg-gray-900"
-            : "bg-gray-50"
-        }`}
+        className={`w-full mt-5 overflow-x-hidden`}
       >
         <Header />
         <div className="w-full mt-10 overflow-x-hidden">

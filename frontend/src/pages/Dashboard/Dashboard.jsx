@@ -34,7 +34,7 @@ const Dashboard = () => {
   ]);
 
   // context
-  const { theme } = useContext(themeContext);
+  const { theme , setTheme } = useContext(themeContext);
   // Redux State and Actions
 
   const dispatch = useDispatch();
@@ -42,8 +42,9 @@ const Dashboard = () => {
   // console.log("isLoading:", isLoading);
 
   useEffect(() => {
-    console.log("Loading State should end: ", isLoading);
-  }, [isLoading]);
+    localStorage.getItem('theme') === 'dark' ?
+    setTheme('dark') : setTheme('light')
+  }, []);
 
   const handleSendMessage = async (message) => {
     dispatch(setLoading());

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { setLoading, unsetloading } from "../../redux/";
 import { themeContext } from "../../context/context";
@@ -9,12 +9,13 @@ const ProtectedRoute = ({ children }) => {
   const status = useSelector((state) => state.auth.status);
   const loading = useSelector((state) => state.loading.loading);
   const { theme, setTheme } = useContext(themeContext);
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
 
   // Optional: Show loader until auth status is known
   // if (loading) {
@@ -30,7 +31,7 @@ const ProtectedRoute = ({ children }) => {
   // }
 
   if (!status) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to={'/auth'} replace />
   }
 
   if (status) {
