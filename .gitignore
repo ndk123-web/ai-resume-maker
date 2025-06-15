@@ -49,4 +49,5 @@ coverage/
 *.bak
 *.old
 
-config/
+backend/services/ai_service/api/config/
+backend/service/auth-service/config/
