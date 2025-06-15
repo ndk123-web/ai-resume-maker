@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getUserChatHistory } from "../../api/getUserChatHistory.js";
-import { setUserChatHistory } from "../slices/user_chat_history.slice.js"
+import { setUserChatHistory } from "../slices/user_chat_history.slice.js";
 
 const fetchUserChatHistory = createAsyncThunk(
   "loading/fetchUserChatHistory",
@@ -13,7 +13,7 @@ const fetchUserChatHistory = createAsyncThunk(
         return;
       }
 
-      dispatch(setUserChatHistory(backendResponse.data));
+      return backendResponse.data;
     } catch (err) {
       alert(err.message);
     }

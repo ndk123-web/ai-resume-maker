@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -9,6 +9,8 @@ import {
   History,
 } from "lucide-react";
 import { themeContext } from "../../context/context";
+import { useNavigate } from "react-router-dom";
+import { nav } from "framer-motion/client";
 
 const ChatHistory = ({
   chatHistory,
@@ -19,6 +21,7 @@ const ChatHistory = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -137,16 +140,17 @@ const ChatHistory = ({
           ) : (
             chatHistory.map((chat) => (
               <motion.div
-                key={chat.id}
+                key={chat._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ scale: 1.01 }}
                 className="relative"
               >
+                {/* We can know which chat is currently active */}
                 {/* Chat Item Container - Fixed to use div instead of nested buttons */}
                 <div
                   className={`w-full text-left p-3 rounded-lg transition-all duration-200 group relative ${
-                    currentChat?.id === chat.id
+                    currentChat?._id === chat._id
                       ? theme === "dark"
                         ? "bg-purple-900/50 border border-purple-700"
                         : "bg-purple-50 border border-purple-200"
@@ -160,6 +164,7 @@ const ChatHistory = ({
                     onClick={() => {
                       onChatSelect(chat);
                       setIsSidebarOpen(false);
+                      navigate(`/c/${chat.sessionId}`);
                     }}
                     className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                     style={{ zIndex: 1 }}
@@ -179,7 +184,7 @@ const ChatHistory = ({
                           theme === "dark" ? "text-gray-400" : "text-gray-500"
                         }`}
                       >
-                        {chat.preview}
+                        {chat.title}
                       </p>
                       <span
                         className={`text-xs mt-1 block ${
@@ -196,7 +201,7 @@ const ChatHistory = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveDropdown(
-                            activeDropdown === chat.id ? null : chat.id
+                            activeDropdown === chat._id ? null : chat._id
                           );
                         }}
                         className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${
@@ -209,7 +214,7 @@ const ChatHistory = ({
                       </button>
 
                       <AnimatePresence>
-                        {activeDropdown === chat.id && (
+                        {activeDropdown === chat._id && (
                           <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: -10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -221,7 +226,7 @@ const ChatHistory = ({
                             }`}
                           >
                             <button
-                              onClick={(e) => handleDeleteChat(chat.id, e)}
+                              onClick={(e) => handleDeleteChat(chat._id, e)}
                               className={`w-full flex items-center space-x-2 px-3 py-2 text-sm transition-colors ${
                                 theme === "dark"
                                   ? "text-red-400 hover:bg-gray-700"

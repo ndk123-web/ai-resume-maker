@@ -14,6 +14,7 @@ import {
   setPageLoading,
   unsetPageLoading,
   fetchUserChatHistory,
+  setUserChatHistory,
 } from "../../redux";
 
 import { createNewChatSession } from "../../api/createChatSession.js";
@@ -21,8 +22,11 @@ import { createNewChatSession } from "../../api/createChatSession.js";
 import { v4 as uuid } from "uuid";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../firebase/firebase";
+import { useParams } from "react-router-dom";
 
 const Dashboard = () => {
+  const { sessionId } = useParams();
+
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const auth = getAuth(app);
@@ -41,6 +45,13 @@ const Dashboard = () => {
   // console.log("isLoading:", isLoading);
 
   // console.log("currentSessionId:", currentSessionId);
+  useEffect(() => {
+    sessionId
+      ? console.log("Session Id: ", sessionId)
+      : console.log("No Session Id");
+
+    dispatch(setCurrentSessionId({ sessionId }));
+  }, []);
 
   useEffect(() => {
     localStorage.getItem("theme") === "dark"
@@ -53,7 +64,14 @@ const Dashboard = () => {
       if (user) {
         const token = await user.getIdToken();
         console.log("User token:", token);
-        dispatch(fetchUserChatHistory({ token })); // pass token if needed
+
+        const response = await dispatch(fetchUserChatHistory({ token })); // pass token if needed
+
+        dispatch(setUserChatHistory({ data: response.payload.data }));
+        console.log("Response:", response);
+
+        // setting chat history in state
+        setChatHistory(response.payload.data);
       } else {
         console.log("No user is signed in");
         // Redirect to login or handle anonymous state
@@ -64,7 +82,7 @@ const Dashboard = () => {
   }, []);
 
   const handleSendMessage = async (message) => {
-    dispatch(setLoading());
+    console.log("Loading State should start: ", isLoading);
 
     // Add user message
     const userMessage = {
@@ -79,6 +97,8 @@ const Dashboard = () => {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    
+    dispatch(setLoading());
 
     // Simulate AI response
     setTimeout(() => {
@@ -96,11 +116,8 @@ const Dashboard = () => {
 
       setMessages((prev) => [...prev, aiMessage]);
       dispatch(unsetloading());
+      console.log("Loading State should end: ", isLoading);
     }, 1500);
-
-    console.log("Before Loading End: ", isLoading);
-
-    console.log("After Loading: ", isLoading);
   };
 
   const handleNewChat = async () => {
@@ -139,14 +156,7 @@ const Dashboard = () => {
   const handleChatSelect = (chat) => {
     setCurrentChat(chat);
     // In real app, load chat messages from API
-    setMessages([
-      {
-        id: 1,
-        type: "user",
-        content: chat.preview,
-        timestamp: chat.timestamp,
-      },
-    ]);
+    setMessages([]);
   };
 
   return (

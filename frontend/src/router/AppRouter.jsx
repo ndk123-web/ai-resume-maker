@@ -74,6 +74,16 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  {
+    path: "/c/:sessionId",
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
+      </ProtectedRoute>
+    ),
+  },
 ]);
 
 export default router;

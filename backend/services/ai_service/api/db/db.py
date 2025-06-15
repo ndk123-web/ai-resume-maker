@@ -7,11 +7,13 @@ from pymongo.server_api import ServerApi
 from api.utils.apiError import ApiError
 
 # Create global client instance
-client = AsyncIOMotorClient(os.getenv("MONGO_DB_URI"), server_api=ServerApi("1") , serverSelectionTimeoutMS=5000)
+client = AsyncIOMotorClient(os.getenv("MONGO_DB_URI"), server_api=ServerApi("1"))
 db = client["ai-resume"]
 
 async def ping_server():
     try:
+        client = AsyncIOMotorClient(os.getenv("MONGO_DB_URI"), server_api=ServerApi("1"))
+        db = client["ai-resume"]
         db_instance = await client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB! ", db_instance)
         return True
