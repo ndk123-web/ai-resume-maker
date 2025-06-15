@@ -22,13 +22,15 @@ import { createNewChatSession } from "../../api/createChatSession.js";
 import { v4 as uuid } from "uuid";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../firebase/firebase";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { current } from "@reduxjs/toolkit";
 
 const Dashboard = () => {
   const { sessionId } = useParams();
 
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
+  const navigate = useNavigate();
   const auth = getAuth(app);
   const pageLoading = useSelector((state) => state.loading.pageLoading);
   const userHistory = useSelector((state) => state.user_chat_history);
@@ -81,32 +83,71 @@ const Dashboard = () => {
     return () => unsubscribe(); // clean up the listener on unmount
   }, []);
 
+  useEffect(() => {
+    if (sessionId) {
+      setCurrentSessionId({ sessionId });
+      setCurrentChat({ sessionId: sessionId });
+    }
+  }, [sessionId]);
+
   const handleSendMessage = async (message) => {
-    console.log("Loading State should start: ", isLoading);
+    // console.log("Loading State should start: ", isLoading);
 
-    // Add user message
-    const userMessage = {
-      id: Date.now(),
-      type: "user",
-      content: message,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
-    };
+    // // Add user message
+    // const userMessage = {
+    //   id: Date.now(),
+    //   type: "user",
+    //   content: message,
+    //   timestamp: new Date().toLocaleTimeString([], {
+    //     hour: "2-digit",
+    //     minute: "2-digit",
+    //     hour12: true,
+    //   }),
+    // };
 
-    setMessages((prev) => [...prev, userMessage]);
-    
+    // setMessages((prev) => [...prev, userMessage]);
+
     dispatch(setLoading());
 
     // Simulate AI response
-    setTimeout(() => {
-      const aiMessage = {
-        id: Date.now() + 1,
-        type: "ai",
-        content:
-          "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
+    // setTimeout(() => {
+    //   const aiMessage = {
+    //     id: Date.now() + 1,
+    //     type: "ai",
+    //     content:
+    //       "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
+    //     timestamp: new Date().toLocaleTimeString([], {
+    //       hour: "2-digit",
+    //       minute: "2-digit",
+    //       hour12: true,
+    //     }),
+    //   };
+
+    if (!sessionId) {
+      const newSessionId = uuid();
+      if (!newSessionId) {
+        alert("Error creating new chat session");
+        return;
+      }
+
+      const idToken = await auth.currentUser.getIdToken();
+
+      const backendResponse = await createNewChatSession(newSessionId, idToken);
+      console.log("Backend Response: ", backendResponse);
+
+      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+        console.log(
+          "Error creating new chat session: ",
+          backendResponse.message
+        );
+        return;
+      }
+
+      // Add user message
+      const userMessage = {
+        id: Date.now(),
+        type: "user",
+        content: message,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -114,10 +155,35 @@ const Dashboard = () => {
         }),
       };
 
-      setMessages((prev) => [...prev, aiMessage]);
-      dispatch(unsetloading());
-      console.log("Loading State should end: ", isLoading);
-    }, 1500);
+      setMessages((prev) => [...prev, userMessage]);
+
+      // Simulate AI response
+
+      setTimeout(() => {
+        const aiMessage = {
+          id: Date.now() + 1,
+          type: "ai",
+          content:
+            "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+        dispatch(unsetloading());
+      }, 2000);
+
+      dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
+
+      navigate(`/c/${newSessionId}`);
+    }
+
+    //   setMessages((prev) => [...prev, aiMessage]);
+    //   console.log("Loading State should end: ", isLoading);
+    // }, 1500);
   };
 
   const handleNewChat = async () => {
@@ -145,7 +211,8 @@ const Dashboard = () => {
       }
 
       setMessages([]);
-      setCurrentChat(null);
+      // setCurrentChat(null);
+      navigate(`/c/${newSessionId}`);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -173,6 +240,7 @@ const Dashboard = () => {
           onChatSelect={handleChatSelect}
           onNewChat={handleNewChat}
           theme={theme}
+          setCurrentChat={setCurrentChat}
         />
 
         {/* Main Chat Area */}

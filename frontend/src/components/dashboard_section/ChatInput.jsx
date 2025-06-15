@@ -121,6 +121,9 @@ const ChatInput = ({ onSendMessage, isLoading, theme }) => {
             <motion.button
               type="submit"
               disabled={!message.trim() || isLoading}
+              onClick={()=>{
+                onSendMessage(message)
+              }}
               whileHover={{ scale: message.trim() && !isLoading ? 1.05 : 1 }}
               whileTap={{ scale: message.trim() && !isLoading ? 0.95 : 1 }}
               className={`p-2 rounded-lg transition-all duration-200 ${

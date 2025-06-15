@@ -11,6 +11,8 @@ import {
 import { themeContext } from "../../context/context";
 import { useNavigate } from "react-router-dom";
 import { nav } from "framer-motion/client";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentSessionId } from "../../redux";
 
 const ChatHistory = ({
   chatHistory,
@@ -18,10 +20,15 @@ const ChatHistory = ({
   onChatSelect,
   onNewChat,
   theme,
+  setCurrentChat
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const chatHistoryLoading = useSelector(
+    (state) => state.loading.chatHistoryLoading
+  );
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -121,131 +128,144 @@ const ChatHistory = ({
         </div>
 
         {/* Chat List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {chatHistory.length === 0 ? (
-            <div className="text-center py-8">
-              <MessageSquare
-                className={`w-12 h-12 mx-auto mb-4 ${
-                  theme === "dark" ? "text-gray-600" : "text-gray-400"
-                }`}
-              />
-              <p
-                className={`text-sm ${
-                  theme === "dark" ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                No conversations yet
-              </p>
-            </div>
-          ) : (
-            chatHistory.map((chat) => (
-              <motion.div
-                key={chat._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.01 }}
-                className="relative"
-              >
-                {/* We can know which chat is currently active */}
-                {/* Chat Item Container - Fixed to use div instead of nested buttons */}
-                <div
-                  className={`w-full text-left p-3 rounded-lg transition-all duration-200 group relative ${
-                    currentChat?._id === chat._id
-                      ? theme === "dark"
-                        ? "bg-purple-900/50 border border-purple-700"
-                        : "bg-purple-50 border border-purple-200"
-                      : theme === "dark"
-                      ? "hover:bg-gray-800 border border-transparent"
-                      : "hover:bg-gray-50 border border-transparent"
+
+        {chatHistoryLoading ? (
+          <div
+            className={`flex items-top mt-4 justify-center min-h-screen ${
+              theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+            } `}
+          >
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6938EF]"></div>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            {chatHistory.length === 0 ? (
+              <div className="text-center py-8">
+                <MessageSquare
+                  className={`w-12 h-12 mx-auto mb-4 ${
+                    theme === "dark" ? "text-gray-600" : "text-gray-400"
+                  }`}
+                />
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
-                  {/* Main Chat Button - covers most of the area */}
-                  <button
-                    onClick={() => {
-                      onChatSelect(chat);
-                      setIsSidebarOpen(false);
-                      navigate(`/c/${chat.sessionId}`);
-                    }}
-                    className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                    style={{ zIndex: 1 }}
-                  />
+                  No conversations yet
+                </p>
+              </div>
+            ) : (
+              chatHistory.map((chat) => (
+                <motion.div
+                  key={chat._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ scale: 1.01 }}
+                  className="relative"
+                >
+                  {/* We can know which chat is currently active */}
+                  {/* Chat Item Container - Fixed to use div instead of nested buttons */}
+                  <div
+                    className={`w-full text-left p-3 rounded-lg transition-all duration-200 group relative ${
+                      currentChat?.sessionId === chat.sessionId
+                        ? theme === "dark"
+                          ? "bg-purple-900/50 border border-purple-700"
+                          : "bg-purple-50 border border-purple-200"
+                        : theme === "dark"
+                        ? "hover:bg-gray-800 border border-transparent"
+                        : "hover:bg-gray-50 border border-transparent"
+                    }`}
+                  >
+                    {/* Main Chat Button - covers most of the area */}
+                    <button
+                      onClick={() => {
+                        onChatSelect(chat);
+                        setIsSidebarOpen(false);
+                        navigate(`/c/${chat.sessionId}`);
+                        setCurrentChat(chat);
+                        setCurrentSessionId(chat.sessionId);
+                      }}
+                      className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                      style={{ zIndex: 1 }}
+                    />
 
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h3
-                        className={`font-medium text-sm mb-1 truncate ${
-                          theme === "dark" ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        {chat.title}
-                      </h3>
-                      <p
-                        className={`text-xs truncate ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        {chat.title}
-                      </p>
-                      <span
-                        className={`text-xs mt-1 block ${
-                          theme === "dark" ? "text-gray-500" : "text-gray-400"
-                        }`}
-                      >
-                        {chat.timestamp}
-                      </span>
-                    </div>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className={`font-medium text-sm mb-1 truncate ${
+                            theme === "dark" ? "text-white" : "text-gray-900"
+                          }`}
+                        >
+                          {chat.title}
+                        </h3>
+                        <p
+                          className={`text-xs truncate ${
+                            theme === "dark" ? "text-gray-400" : "text-gray-500"
+                          }`}
+                        >
+                          {chat.title}
+                        </p>
+                        <span
+                          className={`text-xs mt-1 block ${
+                            theme === "dark" ? "text-gray-500" : "text-gray-400"
+                          }`}
+                        >
+                          {chat.timestamp}
+                        </span>
+                      </div>
 
-                    {/* Dropdown Menu - positioned above the main button */}
-                    <div className="relative" style={{ zIndex: 2 }}>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveDropdown(
-                            activeDropdown === chat._id ? null : chat._id
-                          );
-                        }}
-                        className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${
-                          theme === "dark"
-                            ? "hover:bg-gray-700"
-                            : "hover:bg-gray-200"
-                        }`}
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
+                      {/* Dropdown Menu - positioned above the main button */}
+                      <div className="relative" style={{ zIndex: 2 }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveDropdown(
+                              activeDropdown === chat._id ? null : chat._id
+                            );
+                          }}
+                          className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${
+                            theme === "dark"
+                              ? "hover:bg-gray-700"
+                              : "hover:bg-gray-200"
+                          }`}
+                        >
+                          <MoreVertical className="w-4 h-4" />
+                        </button>
 
-                      <AnimatePresence>
-                        {activeDropdown === chat._id && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                            className={`absolute right-0 top-8 w-32 py-1 rounded-lg shadow-lg border z-10 ${
-                              theme === "dark"
-                                ? "bg-gray-800 border-gray-700"
-                                : "bg-white border-gray-200"
-                            }`}
-                          >
-                            <button
-                              onClick={(e) => handleDeleteChat(chat._id, e)}
-                              className={`w-full flex items-center space-x-2 px-3 py-2 text-sm transition-colors ${
+                        <AnimatePresence>
+                          {activeDropdown === chat._id && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                              className={`absolute right-0 top-8 w-32 py-1 rounded-lg shadow-lg border z-10 ${
                                 theme === "dark"
-                                  ? "text-red-400 hover:bg-gray-700"
-                                  : "text-red-600 hover:bg-gray-50"
+                                  ? "bg-gray-800 border-gray-700"
+                                  : "bg-white border-gray-200"
                               }`}
                             >
-                              <Trash2 className="w-4 h-4" />
-                              <span>Delete</span>
-                            </button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                              <button
+                                onClick={(e) => handleDeleteChat(chat._id, e)}
+                                className={`w-full flex items-center space-x-2 px-3 py-2 text-sm transition-colors ${
+                                  theme === "dark"
+                                    ? "text-red-400 hover:bg-gray-700"
+                                    : "text-red-600 hover:bg-gray-50"
+                                }`}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                <span>Delete</span>
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))
-          )}
-        </div>
+                </motion.div>
+              ))
+            )}
+          </div>
+        )}
       </motion.aside>
     </>
   );

@@ -13,6 +13,9 @@ const fetchUserChatHistory = createAsyncThunk(
         return;
       }
 
+      // For testing chatHisotryLoading 
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+
       return backendResponse.data;
     } catch (err) {
       alert(err.message);
