@@ -202,9 +202,8 @@ const Dashboard = () => {
       id: Date.now() + 1,
       type: "ai",
       content: backendResponse.data.data.cloudFileUrl
-        ? `PDF:  ${backendResponse.data.data.cloudFileUrl} + " \n" + ${backendResponse.data.data.response}`
-        : backendResponse.data.data.response, 
-
+        ? `📄 PDF Link: ${backendResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendResponse.data.data.response}`
+        : backendResponse.data.data.response,
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
