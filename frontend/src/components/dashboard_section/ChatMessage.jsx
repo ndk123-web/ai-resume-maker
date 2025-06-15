@@ -153,7 +153,7 @@ const ChatMessage = ({ message, theme }) => {
               )}
 
               {/* Download Button (for AI messages with resume content) */}
-              {!isUser && message.content.length > 200 && (
+              {!isUser && message?.content?.length > 200 && (
                 <motion.button
                   onClick={handleDownload}
                   whileHover={{ scale: 1.1 }}

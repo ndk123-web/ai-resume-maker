@@ -18,12 +18,14 @@ import {
 } from "../../redux";
 
 import { createNewChatSession } from "../../api/createChatSession.js";
+import { getChatResponse } from "../../api/getChatResponse.js";
 
 import { v4 as uuid } from "uuid";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../firebase/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import { current } from "@reduxjs/toolkit";
+import { u } from "framer-motion/client";
 
 const Dashboard = () => {
   const { sessionId } = useParams();
@@ -72,6 +74,9 @@ const Dashboard = () => {
         dispatch(setUserChatHistory({ data: response.payload.data }));
         console.log("Response:", response);
 
+        // const backendResposne = await getChatResponse({ token });
+        // console.log("Backend Response to verify-jwt:", backendResposne);
+
         // setting chat history in state
         setChatHistory(response.payload.data);
       } else {
@@ -83,6 +88,7 @@ const Dashboard = () => {
     return () => unsubscribe(); // clean up the listener on unmount
   }, []);
 
+  // update currentSessionId and active chat even if reload the page
   useEffect(() => {
     if (sessionId) {
       setCurrentSessionId({ sessionId });
@@ -91,40 +97,11 @@ const Dashboard = () => {
   }, [sessionId]);
 
   const handleSendMessage = async (message) => {
-    // console.log("Loading State should start: ", isLoading);
-
-    // // Add user message
-    // const userMessage = {
-    //   id: Date.now(),
-    //   type: "user",
-    //   content: message,
-    //   timestamp: new Date().toLocaleTimeString([], {
-    //     hour: "2-digit",
-    //     minute: "2-digit",
-    //     hour12: true,
-    //   }),
-    // };
-
-    // setMessages((prev) => [...prev, userMessage]);
-
     dispatch(setLoading());
-
-    // Simulate AI response
-    // setTimeout(() => {
-    //   const aiMessage = {
-    //     id: Date.now() + 1,
-    //     type: "ai",
-    //     content:
-    //       "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
-    //     timestamp: new Date().toLocaleTimeString([], {
-    //       hour: "2-digit",
-    //       minute: "2-digit",
-    //       hour12: true,
-    //     }),
-    //   };
 
     if (!sessionId) {
       const newSessionId = uuid();
+
       if (!newSessionId) {
         alert("Error creating new chat session");
         return;
@@ -143,7 +120,8 @@ const Dashboard = () => {
         return;
       }
 
-      // Add user message
+      dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
+
       const userMessage = {
         id: Date.now(),
         type: "user",
@@ -157,8 +135,7 @@ const Dashboard = () => {
 
       setMessages((prev) => [...prev, userMessage]);
 
-      // Simulate AI response
-
+      // ✅ Move unsetloading INSIDE timeout
       setTimeout(() => {
         const aiMessage = {
           id: Date.now() + 1,
@@ -173,13 +150,71 @@ const Dashboard = () => {
         };
 
         setMessages((prev) => [...prev, aiMessage]);
-        dispatch(unsetloading());
+        dispatch(unsetloading()); // ✅ Correct place
       }, 2000);
-
-      dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
-
       navigate(`/c/${newSessionId}`);
+    } else {
+      const userMessage = {
+        id: Date.now(),
+        type: "user",
+        content: message,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+
+      // setTimeout(() => {
+      //   const aiMessage = {
+      //     id: Date.now() + 1,
+      //     type: "ai",
+      //     content:
+      //       "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
+      //     timestamp: new Date().toLocaleTimeString([], {
+      //       hour: "2-digit",
+      //       minute: "2-digit",
+      //       hour12: true,
+      //     }),
+      //   };
+
+      //   setMessages((prev) => [...prev, aiMessage]);
+      //   dispatch(unsetloading()); // ✅ Move here
+      // }, 2000);
     }
+
+    const idToken = await auth.currentUser.getIdToken();
+    if (!idToken) {
+      alert("Cant able to get idToken");
+      return;
+    }
+
+    const backendResponse = await getChatResponse({
+      token: idToken,
+      prompt: message,
+    });
+    console.log("Backend Response after sending message: ", backendResponse);
+    console.log("Actual response: ", backendResponse.data.data.response);
+
+    const aiMessage = {
+      id: Date.now() + 1,
+      type: "ai",
+      content: backendResponse.data.data.cloudFileUrl
+        ? `PDF:  ${backendResponse.data.data.cloudFileUrl} + " \n" + ${backendResponse.data.data.response}`
+        : backendResponse.data.data.response, 
+
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
+    };
+
+    setMessages((prev) => [...prev, aiMessage]);
+
+    dispatch(unsetloading()); // ✅ Move here
 
     //   setMessages((prev) => [...prev, aiMessage]);
     //   console.log("Loading State should end: ", isLoading);
@@ -193,10 +228,15 @@ const Dashboard = () => {
     console.log("New Session ID: ", newSessionId);
 
     try {
+      if (!auth.currentUser) {
+        alert("User not logged in. Please login first.");
+        dispatch(unsetPageLoading());
+        return;
+      }
+
       dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
 
       const idToken = await auth.currentUser.getIdToken();
-
       console.log("Current User ID Token: ", idToken);
 
       const backendResponse = await createNewChatSession(newSessionId, idToken);
@@ -211,7 +251,7 @@ const Dashboard = () => {
       }
 
       setMessages([]);
-      // setCurrentChat(null);
+      setCurrentChat({ sessionId: newSessionId });
       navigate(`/c/${newSessionId}`);
     } catch (err) {
       alert(err.message);

@@ -17,8 +17,7 @@ const ChatInput = ({ onSendMessage, isLoading, theme }) => {
     }
   }, [message]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (message.trim() && !isLoading) {
       onSendMessage(message.trim());
       setMessage("");
@@ -123,6 +122,7 @@ const ChatInput = ({ onSendMessage, isLoading, theme }) => {
               disabled={!message.trim() || isLoading}
               onClick={()=>{
                 onSendMessage(message)
+                setMessage("")
               }}
               whileHover={{ scale: message.trim() && !isLoading ? 1.05 : 1 }}
               whileTap={{ scale: message.trim() && !isLoading ? 0.95 : 1 }}

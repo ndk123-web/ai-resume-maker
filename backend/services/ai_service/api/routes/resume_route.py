@@ -1,4 +1,5 @@
 import os
+import re
 from api.utils.cloudinary import upload_image_from_url
 
 from fastapi import APIRouter, Request, Depends
@@ -53,8 +54,13 @@ async def create_resume(
         print("First Final Response: ",is_want_pdf_response)
 
         # If the AI response is "no", return a normal response
-        if is_want_pdf_response.splitlines()[0].strip().lower() == "no":
-            
+        
+        match = re.search(r"(yes|no)", is_want_pdf_response.strip().lower())
+        decision = match.group(1) if match else None
+        
+        print("Decision: ",decision)
+        
+        if decision.strip().lower() == "no":
             
             userId = "684490318f5df116072f5feb"
             sessionId = "df1"
@@ -86,8 +92,11 @@ async def create_resume(
             if not file_path:
                 return ApiError.send(statusCode=500,message="Failed to create resume",data=[])
             
-            cloud_url_path = await upload_image_from_url(file_path,user_payload["username"] + ".pdf")
+            cloud_url_path = await upload_image_from_url(file_path,user_payload["name"] + ".pdf")
             print("File Path: ",file_path)
+            
+            if not cloud_url_path:
+                return ApiError.send(statusCode=500,message="Failed to upload resume to cloud",data=[])
             
             userId = "684490318f5df116072f5feb"
             sessionId = "df1"
@@ -127,3 +136,11 @@ async def create_resume(
         )
 
 
+@resume_router.get("/test-jwt")
+async def testJwt(user_payload=Depends(verifyJWT)):
+    # print("User Payload: ",user_payload)
+    return ApiResponse.send(
+        200,
+        data=user_payload,
+        message="Successfully verify the data"
+    )

@@ -29,7 +29,7 @@ def handle_extract_html_string(response):
     return ""
 
 async def handle_pdf_creation(response, user_payload):
-    filename = user_payload['username'] + ".pdf"
+    filename = user_payload['name'] + ".pdf"
     folder_path = os.path.join("api","public","resumes")
 
     os.makedirs(folder_path, exist_ok=True)
