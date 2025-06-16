@@ -15,6 +15,7 @@ import {
   unsetPageLoading,
   fetchUserChatHistory,
   setUserChatHistory,
+  fetchCurrentSessionChats,
 } from "../../redux";
 
 import { createNewChatSession } from "../../api/createChatSession.js";
@@ -71,8 +72,14 @@ const Dashboard = () => {
 
         const response = await dispatch(fetchUserChatHistory({ token })); // pass token if needed
 
+        // fetch the user chat accorrding to sessionId and token
+        if (sessionId) {
+          const response = await dispatch(fetchCurrentSessionChats({ token, sessionId }));
+          console.log("Response to fetchCurrentSessionChats:", response);
+        }
+
         dispatch(setUserChatHistory({ data: response.payload.data }));
-        console.log("Response:", response);
+        console.log("Response to fetchUserChatHistory:", response);
 
         // const backendResposne = await getChatResponse({ token });
         // console.log("Backend Response to verify-jwt:", backendResposne);
@@ -86,7 +93,7 @@ const Dashboard = () => {
     });
 
     return () => unsubscribe(); // clean up the listener on unmount
-  }, []);
+  }, [sessionId]);
 
   // update currentSessionId and active chat even if reload the page
   useEffect(() => {
@@ -194,6 +201,7 @@ const Dashboard = () => {
     const backendResponse = await getChatResponse({
       token: idToken,
       prompt: message,
+      sessionId : sessionId
     });
     console.log("Backend Response after sending message: ", backendResponse);
     console.log("Actual response: ", backendResponse.data.data.response);

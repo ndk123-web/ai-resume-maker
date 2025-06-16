@@ -6,7 +6,7 @@ from firebase_admin import auth
 from api.utils.apiError import ApiError
 from api.utils.apiResponse import ApiResponse
 
-def verifyJWT(request: Request):
+async def verifyJWT(request: Request):
     try:
         token = request.headers.get("Authorization").split(" ")[1]
         if not token:

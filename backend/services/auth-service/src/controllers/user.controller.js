@@ -105,7 +105,7 @@ const createChatSession = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Chat Session Not created');
   }
 
-  res.status(200).json(new ApiResponse(200, newChatSession, 'Created Chat Session successfully'));
+  res.status(200).json(new ApiResponse(200, prompts, 'Created Chat Session successfully'));
 });
 
 const getUserChatHistory = asyncHandler(async (req, res) => {
@@ -122,4 +122,31 @@ const getUserChatHistory = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, chatHistory, 'Chat History'));
 });
 
-export { registerUser, loginUser, createChatSession, getUserChatHistory };
+
+const getCurrentSessionChats = asyncHandler(async (req, res) => {
+  const user = req.user;
+  console.log("Firebase User in getCurrentSessionChats: ", user);
+  const { sessionId } = req.body;
+  console.log("SessionId in getCurrentSessionChats: ", sessionId);
+
+  const existUser = await User.findOne({ uid: user.uid });
+  if (!existUser) {
+    throw new ApiError(400, 'User Not registered');
+  }
+
+  const currentSessionChats = await Prompt.find({
+    $and: [{ user: existUser._id }, { sessionId: sessionId }],
+  });
+
+  if (!currentSessionChats) {
+    throw new ApiError(400, 'Chat Session Not created');
+  }
+
+  console.log("Current Session Chats: ", currentSessionChats);  
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, currentSessionChats, 'Succcessfully fetched Current Session Chats'));
+});
+
+export { registerUser, loginUser, createChatSession, getUserChatHistory, getCurrentSessionChats };

@@ -26,6 +26,7 @@ def resume():
 # Define a pydantic model to represent the resume prompt
 class Resume(BaseModel):
     resumePrompt: str
+    sessionId : str
 
 # Define an endpoint to create a resume
 @resume_router.post("/create-resume")
@@ -42,8 +43,10 @@ async def create_resume(
     try:
         
         prompt_collection = db['prompts']
+        user_collection = db['users']
         # Print the user prompt
         print("User Prompt: ",payload.resumePrompt)
+        print("User SessionId: ",payload.sessionId)
 
         # Generate a prompt to ask the AI if it wants to create a resume
         is_want_pdf_prompt = os.getenv("IS_WANT_PDF_PROMPT") + payload.resumePrompt
@@ -60,10 +63,22 @@ async def create_resume(
         
         print("Decision: ",decision)
         
-        if decision.strip().lower() == "no":
+        print("User Payload: ",user_payload)
+        if decision.lower().strip() == "no" or is_want_pdf_response.lower().strip() == "no":
             
-            userId = "684490318f5df116072f5feb"
-            sessionId = "df1"
+            isExistUser = await user_collection.find_one( { "uid" : user_payload['uid'] } )
+            
+            if not isExistUser:
+                return ApiError.send(
+                    statusCode=404,
+                    message="User Not Found",
+                    data={"response": "User Not Found"}
+                )
+            
+            userId = isExistUser['_id']
+            
+            print("User: ",userId)
+            sessionId = payload.sessionId 
             
             insertPrompt = prompt_collection.insert_one({
                 "user" : ObjectId(userId),
@@ -98,8 +113,17 @@ async def create_resume(
             if not cloud_url_path:
                 return ApiError.send(statusCode=500,message="Failed to upload resume to cloud",data=[])
             
-            userId = "684490318f5df116072f5feb"
-            sessionId = "df1"
+            existUser = await user_collection.find_one({ "uid" : user_payload['uid'] })
+            if not existUser:
+                return ApiError.send(
+                    statusCode=404,
+                    message="User Not Found",
+                    data={"response": "User Not Found"}
+                )
+            
+            userId = existUser['_id']
+            
+            sessionId = payload.sessionId
             
             insertPrompt = prompt_collection.insert_one({
                 "user" : ObjectId(userId),

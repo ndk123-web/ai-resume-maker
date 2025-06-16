@@ -30,6 +30,7 @@ import {
   updateUserChatHistory,
   resetUserChatHistory,
 } from "./slices/user_chat_history.slice.js";
+import { fetchCurrentSessionChats } from "./thunks/fetch_current_session_chats.js";
 
 export {
   store,
@@ -37,12 +38,13 @@ export {
   login,
   logout,
   setCurrentSessionId,
-  setUserChatHistory  ,
+  setUserChatHistory,
   updateUserChatHistory,
   resetUserChatHistory,
   resetCurrentSessionId,
   updateCurrentSessionId,
   fetchUserChatHistory,
+  fetchCurrentSessionChats,
   updateUserProfile,
   removeUserProfile,
   setUserProfile,

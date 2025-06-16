@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchUserChatHistory } from "../thunks/fetch_current_user_chat_history.js";
+import { fetchCurrentSessionChats } from "../thunks/fetch_current_session_chats.js";
 
 const initialState = {
   loading: false,
@@ -59,6 +60,7 @@ const loadingSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // for the user chat history
     builder.addCase(fetchUserChatHistory.pending, (state) => {
       state.chatHistoryLoading = true;
     });
@@ -68,6 +70,17 @@ const loadingSlice = createSlice({
     builder.addCase(fetchUserChatHistory.rejected, (state) => {
       state.chatHistoryLoading = false;
     });
+
+    // for the current session chats 
+    builder.addCase(fetchCurrentSessionChats.pending, (state) => {
+      state.chatLoading = true;
+    });
+    builder.addCase(fetchCurrentSessionChats.fulfilled, (state) => {
+      state.chatLoading = false;
+    }),
+      builder.addCase(fetchCurrentSessionChats.rejected, (state) => {
+        state.chatLoading = false;
+      });
   },
 });
 

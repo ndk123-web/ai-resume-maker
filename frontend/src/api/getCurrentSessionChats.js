@@ -1,12 +1,11 @@
 import axios from "axios";
 
-const getChatResponse = async ({ token , prompt , sessionId }) => {
+const getCurrentSessionChats = async ({ token, sessionId }) => {
   try {
     const backendResponse = await axios.post(
-      "http://localhost:8000/api/v1/resumes/create-resume",
+      "http://localhost:3000/api/v1/user/get-current-session-chats",
       {
-        resumePrompt: prompt,
-        sessionId : sessionId
+        sessionId: sessionId,
       },
       {
         headers: {
@@ -14,7 +13,10 @@ const getChatResponse = async ({ token , prompt , sessionId }) => {
         },
       }
     );
-
+    console.log(
+      "Backend Response in getCurrentSessionChats: ",
+      backendResponse
+    );
     return backendResponse;
   } catch (err) {
     return {
@@ -25,4 +27,4 @@ const getChatResponse = async ({ token , prompt , sessionId }) => {
   }
 };
 
-export { getChatResponse };
+export { getCurrentSessionChats };
