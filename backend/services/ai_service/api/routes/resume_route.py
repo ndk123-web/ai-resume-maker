@@ -62,8 +62,8 @@ async def create_resume(
         decision = match.group(1) if match else None
         
         print("Decision: ",decision)
-        
         print("User Payload: ",user_payload)
+        
         if decision.lower().strip() == "no" or is_want_pdf_response.lower().strip() == "no":
             
             isExistUser = await user_collection.find_one( { "uid" : user_payload['uid'] } )
@@ -91,6 +91,7 @@ async def create_resume(
             })
             
             print("Insert Prompt: ",insertPrompt)
+            
 
             return ApiResponse.send(
                 statusCode=200,
@@ -99,16 +100,16 @@ async def create_resume(
             )
 
         # If the AI response is "yes", create a resume
-        else:
+        elif decision.lower().strip() == "yes" or is_want_pdf_response.lower().strip() == "yes":
             # Call the controller to create the resume
             file_path = await handle_resume_creation(user_prompt=payload, user_payload=user_payload)
 
             # If the controller returns an error, return it
-            if not file_path:
+            if not file_path or len(file_path) == 0:
                 return ApiError.send(statusCode=500,message="Failed to create resume",data=[])
             
-            cloud_url_path = await upload_image_from_url(file_path,user_payload["name"] + ".pdf")
-            print("File Path: ",file_path)
+            cloud_url_path = await upload_image_from_url(file_path[0],file_path[1])
+            print("File Path: ",file_path[0])
             
             if not cloud_url_path:
                 return ApiError.send(statusCode=500,message="Failed to upload resume to cloud",data=[])
@@ -141,11 +142,55 @@ async def create_resume(
             # If the controller returns a file path, return it as a file response
             # return FileResponse(file_path,media_type="application/pdf")
             
+            # If uploaded to cloud, remove the local file 
+            os.remove(os.path.normpath(file_path[0]))
+            
             return ApiResponse.send(
                 200,
                 {
                     "cloudFileUrl": cloud_url_path,
                     "response": is_want_pdf_response.lower().strip()
+                },
+                "Successfully Inserted the Prompt in DB"
+            )
+
+        else:
+            
+            existUser = user_collection.find_one({ "uid" : user_payload['uid'] })
+            if not existUser:
+                return ApiError.send(
+                    statusCode=404,
+                    message="User Not Found",
+                    data={"response": "User Not Found"}
+                )
+            
+            userId = existUser['_id']
+            if not userId:
+                return ApiError.send(
+                    statusCode=404,
+                    message="UserId Not Found",
+                    data={"response": "User Not Found"}
+                )
+            
+            sessionId = payload.sessionId
+            
+            insertPrompt = prompt_collection.insert_one({
+                "user" : ObjectId(userId),
+                "userPrompt" : payload.resumePrompt,
+                "userResponse": is_want_pdf_response[3:].lower().strip(),
+                "sessionId" : sessionId,
+                "resumeUrl" : "",
+                "createdAt" : datetime.now(),
+                "updatedAt" : datetime.now()
+            })
+            
+            if not insertPrompt:
+                return ApiError.send(statusCode=500,message="Failed to insert prompt in DB",data=[])
+            
+            return ApiResponse.send(
+                203,
+                {
+                    "response" : "Please ask the AI if you want to create a resume"
                 },
                 "Successfully Inserted the Prompt in DB"
             )

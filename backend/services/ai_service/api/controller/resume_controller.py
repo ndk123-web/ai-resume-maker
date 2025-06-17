@@ -4,6 +4,7 @@ from api.utils.apiError import ApiError
 import os
 import re
 from weasyprint import HTML
+import uuid
 
 async def handle_resume_creation(user_prompt, user_payload):
 
@@ -13,10 +14,12 @@ async def handle_resume_creation(user_prompt, user_payload):
         raise Exception("Could not verify JWT or GeminiApi Problem")
 
 
-    file_path =await handle_pdf_creation(response, user_payload)
+    # It contains a list of 2 elements
+    # In [0] is the path of the pdf file
+    # In [1] is the name of the pdf file
+    file_path_and_file_name = await handle_pdf_creation(response, user_payload)
 
-    return file_path
-
+    return file_path_and_file_name
 
 def handle_extract_html_string(response):
 
@@ -29,7 +32,7 @@ def handle_extract_html_string(response):
     return ""
 
 async def handle_pdf_creation(response, user_payload):
-    filename = user_payload['name'] + ".pdf"
+    filename = user_payload['name'].strip().lower() + "_" + str(uuid.uuid4()) + ".pdf"
     folder_path = os.path.join("api","public","resumes")
 
     os.makedirs(folder_path, exist_ok=True)
@@ -41,4 +44,4 @@ async def handle_pdf_creation(response, user_payload):
     # Do not Write here await i spent 1 hour to debug this shit
     HTML(string=html_content).write_pdf(file_path)
 
-    return file_path
+    return [file_path, filename]
