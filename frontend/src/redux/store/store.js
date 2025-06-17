@@ -10,6 +10,7 @@ import loadingSlicer from "../slices/loading.slice.js";
 import userChatSliceReducer from "../slices/user_chat_history.slice.js";
 import currentSessionSliceReducer from "../slices/current_session.slice.js";
 import currentSessionIdSliceReducer from "../slices/current_session_id.js";
+import userCurrentSessionChatsReducer from "../slices/user_current_session_chats.js";
 
 // User Config Reducer
 const userPersistConfig = {
@@ -29,6 +30,14 @@ const currentSessionIdPersistedReducer = persistReducer(
   currentSessionIdPersistConfig,
   currentSessionIdSliceReducer
 );
+
+// User Chat Config Reducer
+const userChatPersistConfig = {
+  key: "current_session_chats",
+  version: 1,
+  storage: storage,
+};
+const userChatPersistedReducer = persistReducer(userChatPersistConfig, userCurrentSessionChatsReducer);
 
 // Auth Config Reducer
 const authPersistConfig = {
@@ -57,6 +66,7 @@ const rootReducer = combineReducers({
   user_chat_history: chatHistoryPersistedReducer,
   current_session: currentSessionSliceReducer,
   current_session_id: currentSessionIdPersistedReducer,
+  user_current_session_chats : userChatPersistedReducer
 });
 
 const store = configureStore({

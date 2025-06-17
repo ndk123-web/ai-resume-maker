@@ -16,6 +16,7 @@ import {
   fetchUserChatHistory,
   setUserChatHistory,
   fetchCurrentSessionChats,
+  addChats,
 } from "../../redux";
 
 import { createNewChatSession } from "../../api/createChatSession.js";
@@ -31,7 +32,14 @@ import { u } from "framer-motion/client";
 const Dashboard = () => {
   const { sessionId } = useParams();
 
+  const currentSessionChats = useSelector(state=>state.user_current_session_chats)
+  console.log("Current Session Chats: ", currentSessionChats);
+  console.log("isArray : ?" , Array.isArray(Object.values(currentSessionChats)));
+  console.log("Current Session Chats Length: ", Object.values(currentSessionChats).length);
+  console.log("Current Session Chats Values: ", Object.values(currentSessionChats));
+
   const [messages, setMessages] = useState([]);
+
   const [currentChat, setCurrentChat] = useState(null);
   const navigate = useNavigate();
   const auth = getAuth(app);
@@ -74,8 +82,42 @@ const Dashboard = () => {
 
         // fetch the user chat accorrding to sessionId and token
         if (sessionId) {
-          const response = await dispatch(fetchCurrentSessionChats({ token, sessionId }));
-          console.log("Response to fetchCurrentSessionChats:", response);
+          const response = await dispatch(
+            fetchCurrentSessionChats({ token, sessionId })
+          );
+          console.log(
+            "Response to fetchCurrentSessionChats:",
+            response.payload.data
+          );
+
+          dispatch(addChats({ chats: response.payload.data.map(item=>
+            typeof item === 'string' ? JSON.parse(item) : item
+          ) }));
+
+          // this is the actual logic to show the messages according to sessionId to the ui
+          response.payload.data.map((message) => {
+            const userMessage = {
+              id: message._id,
+              type: "user",
+              content: message.userPrompt,
+              timestamp: new Date(message.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              }),
+            };
+            const aiMessage = {
+              id: message.createdAt,
+              type: "ai",
+              content: message.userResponse,
+              timestamp: new Date(message.updatedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              }),
+            };
+            setMessages((prev) => [...prev, userMessage, aiMessage]);
+          });
         }
 
         dispatch(setUserChatHistory({ data: response.payload.data }));
@@ -95,10 +137,9 @@ const Dashboard = () => {
     return () => unsubscribe(); // clean up the listener on unmount
   }, [sessionId]);
 
-  // update currentSessionId and active chat even if reload the page
+  // active chat even if reload the page
   useEffect(() => {
     if (sessionId) {
-      setCurrentSessionId({ sessionId });
       setCurrentChat({ sessionId: sessionId });
     }
   }, [sessionId]);
@@ -201,7 +242,7 @@ const Dashboard = () => {
     const backendResponse = await getChatResponse({
       token: idToken,
       prompt: message,
-      sessionId : sessionId
+      sessionId: sessionId,
     });
     console.log("Backend Response after sending message: ", backendResponse);
     console.log("Actual response: ", backendResponse.data.data.response);
@@ -285,7 +326,6 @@ const Dashboard = () => {
           chatHistory={chatHistory}
           currentChat={currentChat}
           onChatSelect={handleChatSelect}
-          onNewChat={handleNewChat}
           theme={theme}
           setCurrentChat={setCurrentChat}
         />

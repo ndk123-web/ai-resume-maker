@@ -12,8 +12,8 @@ const fetchCurrentSessionChats = createAsyncThunk(
                 alert(backendResponse.message);
                 return;
             }
-            console.log("Backend Response in fetchCurrentSessionChats: ", backendResponse);
-            return backendResponse
+            console.log("Backend Response in fetchCurrentSessionChats: ", backendResponse.data);
+            return backendResponse.data;
         }
         catch(err){
             alert(err.message);
