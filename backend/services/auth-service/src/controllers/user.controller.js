@@ -96,7 +96,7 @@ const createChatSession = asyncHandler(async (req, res) => {
   const newChatSession = await chatSession.create({
     user: existingUser._id,
     sessionId: sessionId,
-    title: (prompts.length > 0 && prompts[0].userPrompt.substring(0, 15)) || 'untitled',
+    title: (prompts.length > 0 && prompts[0].userPrompt.substring(0, 15)) || 'New Chat',
   });
 
   console.log('New Chat Session: ', newChatSession);
@@ -117,17 +117,40 @@ const getUserChatHistory = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'User Not registered');
   }
 
-  const chatHistory = await chatSession.find({ user: existUser._id });
+  // 1. Get all sessions of the user
+  const sessions = await chatSession.find({ user: existUser._id });
 
-  res.status(200).json(new ApiResponse(200, chatHistory, 'Chat History'));
+  // 2. Loop through sessions, get associated prompts
+  const history = await Promise.all(
+    sessions.map(async (session) => {
+      const prompts = await Prompt.find({ sessionId: session.sessionId, user: existUser._id }).sort(
+        { createdAt: -1 },
+      );
+
+      if (prompts.length === 0) return null; // skip empty sessions
+
+      return {
+        sessionId: session.sessionId,
+        title: session.title || 'Untitled Chat',
+        lastPrompt: prompts[0].userPrompt,
+        lastResponse: prompts[0].userResponse,
+        createdAt: prompts[0].createdAt,
+        updatedAt: prompts[0].updatedAt,
+      };
+    }),
+  );
+
+  // 3. Filter out null values (empty sessions)
+  const filteredHistory = history.filter(Boolean);
+
+  res.status(200).json(new ApiResponse(200, filteredHistory, 'Filtered Chat History with Prompts'));
 });
-
 
 const getCurrentSessionChats = asyncHandler(async (req, res) => {
   const user = req.user;
-  console.log("Firebase User in getCurrentSessionChats: ", user);
+  console.log('Firebase User in getCurrentSessionChats: ', user);
   const { sessionId } = req.body;
-  console.log("SessionId in getCurrentSessionChats: ", sessionId);
+  console.log('SessionId in getCurrentSessionChats: ', sessionId);
 
   const existUser = await User.findOne({ uid: user.uid });
   if (!existUser) {
@@ -142,7 +165,7 @@ const getCurrentSessionChats = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Chat Session Not created');
   }
 
-  console.log("Current Session Chats: ", currentSessionChats);  
+  console.log('Current Session Chats: ', currentSessionChats);
 
   res
     .status(200)

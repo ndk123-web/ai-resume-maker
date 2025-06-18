@@ -78,9 +78,8 @@ const router = createBrowserRouter([
     path: "/c/:sessionId",
     element: (
       <ProtectedRoute>
-        <MainLayout>
-          <Dashboard />
-        </MainLayout>
+        <Header />
+        <Dashboard />
       </ProtectedRoute>
     ),
   },

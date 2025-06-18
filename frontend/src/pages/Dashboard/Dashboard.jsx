@@ -66,12 +66,14 @@ const Dashboard = () => {
     dispatch(setCurrentSessionId({ sessionId }));
   }, []);
 
+  // For setting the theme 
   useEffect(() => {
     localStorage.getItem("theme") === "dark"
       ? setTheme("dark")
       : setTheme("light");
   }, []);
 
+  // For fetching the user chat history as well as the current session chats
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -328,6 +330,7 @@ const Dashboard = () => {
           onChatSelect={handleChatSelect}
           theme={theme}
           setCurrentChat={setCurrentChat}
+          onNewChat={handleNewChat}
         />
 
         {/* Main Chat Area */}
