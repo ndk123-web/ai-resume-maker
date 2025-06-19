@@ -29,6 +29,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { current } from "@reduxjs/toolkit";
 import { nav, u } from "framer-motion/client";
 
+
 const Dashboard = () => {
   const { sessionId } = useParams();
 
@@ -256,11 +257,13 @@ const Dashboard = () => {
 
       setMessages((prev) => [...prev, aiMessage]);
       dispatch(unsetloading());
+      setCurrentChat(null);
     }
   };
 
   const handleNewChat = async () => {
     dispatch(setPageLoading());
+    setCurrentChat(null);
 
     // when creating new chat, clear messages
     setMessages([]);

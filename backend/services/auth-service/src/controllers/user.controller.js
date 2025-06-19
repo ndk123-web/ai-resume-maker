@@ -124,7 +124,7 @@ const getUserChatHistory = asyncHandler(async (req, res) => {
   const history = await Promise.all(
     sessions.map(async (session) => {
       const prompts = await Prompt.find({ sessionId: session.sessionId, user: existUser._id }).sort(
-        { createdAt: -1 },
+        { createdAt: 1 },
       );
 
       if (prompts.length === 0) return null; // skip empty sessions
