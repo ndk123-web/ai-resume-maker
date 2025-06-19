@@ -76,7 +76,7 @@ const ChatMessage = ({ message, theme }) => {
       </motion.div>
 
       {/* Message Content */}
-      <div className={`flex-1 max-w-3xl ${isUser ? "text-right" : ""}`}>
+      <div className={`flex-1 max-w-3xl ${isUser ? "text-right" : "" }`}>
         {/* Message Bubble */}
         <motion.div
           whileHover={{ scale: 1.01 }}
@@ -92,8 +92,8 @@ const ChatMessage = ({ message, theme }) => {
           {isLoading ? (
             <Loader theme={theme} />
           ) : (
-            <div className="prose prose-sm max-w-none">
-              <p className="whitespace-pre-wrap leading-relaxed">
+            <div className="prose prose-sm max-w-none break-words whitespace-pre-wrap overflow-x-auto">
+              <p className="text-sm leading-relaxed break-words whitespace-pre-wrap overflow-x-auto">
                 {message.content}
               </p>
             </div>

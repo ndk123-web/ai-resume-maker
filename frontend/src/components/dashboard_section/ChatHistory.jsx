@@ -9,7 +9,7 @@ import {
   History,
 } from "lucide-react";
 import { themeContext } from "../../context/context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , Link } from "react-router-dom";
 import { nav } from "framer-motion/client";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentSessionId } from "../../redux";
@@ -157,7 +157,7 @@ const ChatHistory = ({
             ) : (
               chatHistory.map((chat) => (
                 <motion.div
-                  key={chat._id}
+                  key={chat.sessionId}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   whileHover={{ scale: 1.01 }}
@@ -177,17 +177,20 @@ const ChatHistory = ({
                     }`}
                   >
                     {/* Main Chat Button - covers most of the area */}
+                    <Link to={`/c/${chat.sessionId}`}>
                     <button
                       onClick={() => {
                         onChatSelect(chat);
                         setIsSidebarOpen(false);
-                        navigate(`/c/${chat.sessionId}`);
                         setCurrentChat(chat);
                         setCurrentSessionId(chat.sessionId);
+                        // onNewChat();
+                        // navigate(`/c/${chat.sessionId}`);
                       }}
                       className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                       style={{ zIndex: 1 }}
                     />
+                    </Link>
 
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
@@ -196,14 +199,14 @@ const ChatHistory = ({
                             theme === "dark" ? "text-white" : "text-gray-900"
                           }`}
                         >
-                          {chat.title}
+                          {chat.lastPrompt}
                         </h3>
                         <p
                           className={`text-xs truncate ${
                             theme === "dark" ? "text-gray-400" : "text-gray-500"
                           }`}
                         >
-                          {chat.title}
+                          {chat.lastResponse ? chat.lastResponse.slice(0, 100) : "No response"}
                         </p>
                         <span
                           className={`text-xs mt-1 block ${

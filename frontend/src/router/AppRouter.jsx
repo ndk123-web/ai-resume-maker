@@ -78,11 +78,22 @@ const router = createBrowserRouter([
     path: "/c/:sessionId",
     element: (
       <ProtectedRoute>
-        <Header />
-        <Dashboard />
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
+  {
+    path : '/chat',
+    element : (
+      <ProtectedRoute>
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  }
 ]);
 
 export default router;

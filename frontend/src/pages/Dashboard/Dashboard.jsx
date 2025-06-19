@@ -84,6 +84,9 @@ const Dashboard = () => {
 
         // fetch the user chat accorrding to sessionId and token
         if (sessionId) {
+
+          setMessages([]); // clear the messages before fetching new session chats
+
           const response = await dispatch(
             fetchCurrentSessionChats({ token, sessionId })
           );
@@ -202,7 +205,7 @@ const Dashboard = () => {
         setMessages((prev) => [...prev, aiMessage]);
         dispatch(unsetloading()); // ✅ Correct place
       }, 2000);
-      navigate(`/c/${newSessionId}`);
+      // navigate(`/c/${newSessionId}`);
     } else {
       const userMessage = {
         id: Date.now(),
@@ -273,6 +276,7 @@ const Dashboard = () => {
 
   const handleNewChat = async () => {
     dispatch(setPageLoading());
+    setMessages([]);
 
     const newSessionId = uuid();
     console.log("New Session ID: ", newSessionId);
@@ -300,9 +304,8 @@ const Dashboard = () => {
         return;
       }
 
-      setMessages([]);
       setCurrentChat({ sessionId: newSessionId });
-      navigate(`/c/${newSessionId}`);
+      // navigate(`/c/${newSessionId}`);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -312,8 +315,10 @@ const Dashboard = () => {
 
   const handleChatSelect = (chat) => {
     setCurrentChat(chat);
+
+    // that was the issue for messages disappear after chat selection
     // In real app, load chat messages from API
-    setMessages([]);
+    // setMessages([]);     
   };
 
   return (
