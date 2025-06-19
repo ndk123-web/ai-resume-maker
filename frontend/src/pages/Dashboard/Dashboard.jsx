@@ -29,130 +29,218 @@ import { useParams, useNavigate } from "react-router-dom";
 import { current } from "@reduxjs/toolkit";
 import { nav, u } from "framer-motion/client";
 
-
 const Dashboard = () => {
   const { sessionId } = useParams();
+  const navigate = useNavigate();
+  const auth = getAuth(app);
+  const dispatch = useDispatch();
+  const [token, setToken] = useState(null);
 
+  // Redux State
   const currentSessionChats = useSelector(
     (state) => state.user_current_session_chats
   );
-  console.log("Current Session Chats: ", currentSessionChats);
-  console.log("isArray : ?", Array.isArray(Object.values(currentSessionChats)));
-  console.log(
-    "Current Session Chats Length: ",
-    Object.values(currentSessionChats).length
-  );
-  console.log(
-    "Current Session Chats Values: ",
-    Object.values(currentSessionChats)
-  );
-
-  const [messages, setMessages] = useState([]);
-
-  const [currentChat, setCurrentChat] = useState(null);
-  const navigate = useNavigate();
-  const auth = getAuth(app);
   const pageLoading = useSelector((state) => state.loading.pageLoading);
   const userHistory = useSelector((state) => state.user_chat_history);
+  const isLoading = useSelector((state) => state.loading.loading);
+
+  // console.log("Current Session Chats: ", currentSessionChats);
+  // console.log("isArray : ?", Array.isArray(Object.values(currentSessionChats)));
+  // console.log(
+  //   "Current Session Chats Length: ",
+  //   Object.values(currentSessionChats).length
+  // );
+  // console.log(
+  //   "Current Session Chats Values: ",
+  //   Object.values(currentSessionChats)
+  // );
+
+  // Actual Messages according to sessionId
+  const [messages, setMessages] = useState([]);
+
+  // To keep track of the current chat
+  const [currentChat, setCurrentChat] = useState(null);
 
   // Need to fetch from API and need to store in redux
   const [chatHistory, setChatHistory] = useState([]);
 
   // context
   const { theme, setTheme } = useContext(themeContext);
-  // Redux State and Actions
 
-  const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.loading.loading);
-  // console.log("isLoading:", isLoading);
+  // // For setting the current sessionId
+  // useEffect(() => {
+  //   sessionId
+  //     ? console.log("Session Id: ", sessionId)
+  //     : console.log("No Session Id");
 
-  // console.log("currentSessionId:", currentSessionId);
-  useEffect(() => {
-    sessionId
-      ? console.log("Session Id: ", sessionId)
-      : console.log("No Session Id");
-
-    dispatch(setCurrentSessionId({ sessionId }));
-  }, []);
+  //   dispatch(setCurrentSessionId({ sessionId }));
+  // }, []);
 
   // For setting the theme
-  useEffect(() => {
-    localStorage.getItem("theme") === "dark"
-      ? setTheme("dark")
-      : setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.getItem("theme") === "dark"
+  //     ? setTheme("dark")
+  //     : setTheme("light");
+  // }, []);
 
   // For fetching the user chat history as well as the current session chats
+  // useEffect(() => {
+
+  //   // it means whenever any changes in auth then this will be executed
+  //   const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //     if (user) {
+  //       const token = await user.getIdToken();
+  //       console.log("User token:", token);
+
+  //       const response = await dispatch(fetchUserChatHistory({ token })); // pass token if needed
+
+  //       // fetch the user chat accorrding to sessionId and token
+  //       if (sessionId) {
+  //         setMessages([]); // clear the messages before fetching new session chats
+
+  //         const response = await dispatch(
+  //           fetchCurrentSessionChats({ token, sessionId })
+  //         );
+  //         console.log(
+  //           "Response to fetchCurrentSessionChats:",
+  //           response.payload.data
+  //         );
+
+  //         dispatch(
+  //           addChats({
+  //             chats: response.payload.data.map((item) =>
+  //               typeof item === "string" ? JSON.parse(item) : item
+  //             ),
+  //           })
+  //         );
+
+  //         // this is the actual logic to show the messages according to sessionId to the ui
+  //         response.payload.data.map((message) => {
+  //           const userMessage = {
+  //             id: message._id,
+  //             type: "user",
+  //             content: message.userPrompt,
+  //             timestamp: new Date(message.createdAt).toLocaleTimeString([], {
+  //               hour: "2-digit",
+  //               minute: "2-digit",
+  //               hour12: true,
+  //             }),
+  //           };
+  //           const aiMessage = {
+  //             id: message.createdAt,
+  //             type: "ai",
+  //             content: message.userResponse,
+  //             timestamp: new Date(message.updatedAt).toLocaleTimeString([], {
+  //               hour: "2-digit",
+  //               minute: "2-digit",
+  //               hour12: true,
+  //             }),
+  //           };
+  //           setMessages((prev) => [...prev, userMessage, aiMessage]);
+  //         });
+  //       }
+
+  //       dispatch(setUserChatHistory({ data: response.payload.data }));
+  //       console.log("Response to fetchUserChatHistory:", response);
+
+  //       // const backendResposne = await getChatResponse({ token });
+  //       // console.log("Backend Response to verify-jwt:", backendResposne);
+
+  //       // setting chat history in state
+  //       setChatHistory(response.payload.data);
+  //     } else {
+  //       console.log("No user is signed in");
+  //       // Redirect to login or handle anonymous state
+  //     }
+  //   });
+
+  //   return () => unsubscribe(); // clean up the listener on unmount
+  // }, [sessionId]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const token = await user.getIdToken();
-        console.log("User token:", token);
-
-        const response = await dispatch(fetchUserChatHistory({ token })); // pass token if needed
-
-        // fetch the user chat accorrding to sessionId and token
-        if (sessionId) {
-          setMessages([]); // clear the messages before fetching new session chats
-
-          const response = await dispatch(
-            fetchCurrentSessionChats({ token, sessionId })
-          );
-          console.log(
-            "Response to fetchCurrentSessionChats:",
-            response.payload.data
-          );
-
-          dispatch(
-            addChats({
-              chats: response.payload.data.map((item) =>
-                typeof item === "string" ? JSON.parse(item) : item
-              ),
-            })
-          );
-
-          // this is the actual logic to show the messages according to sessionId to the ui
-          response.payload.data.map((message) => {
-            const userMessage = {
-              id: message._id,
-              type: "user",
-              content: message.userPrompt,
-              timestamp: new Date(message.createdAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              }),
-            };
-            const aiMessage = {
-              id: message.createdAt,
-              type: "ai",
-              content: message.userResponse,
-              timestamp: new Date(message.updatedAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              }),
-            };
-            setMessages((prev) => [...prev, userMessage, aiMessage]);
-          });
-        }
-
-        dispatch(setUserChatHistory({ data: response.payload.data }));
-        console.log("Response to fetchUserChatHistory:", response);
-
-        // const backendResposne = await getChatResponse({ token });
-        // console.log("Backend Response to verify-jwt:", backendResposne);
-
-        // setting chat history in state
-        setChatHistory(response.payload.data);
+        const idToken = await user.getIdToken();
+        console.log("✅ Firebase Token: ", idToken);
+        setToken(idToken); // Save token to local state
       } else {
-        console.log("No user is signed in");
-        // Redirect to login or handle anonymous state
+        console.log("❌ No user is signed in");
+        setToken(null);
       }
     });
 
-    return () => unsubscribe(); // clean up the listener on unmount
-  }, [sessionId]);
+    return () => unsubscribe(); // cleanup
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchHistory = async () => {
+      try {
+        const response = await dispatch(fetchUserChatHistory({ token }));
+        console.log("✅ User Chat History Response:", response);
+        dispatch(setUserChatHistory({ data: response.payload.data }));
+        setChatHistory(response.payload.data); // for local state if needed
+      } catch (error) {
+        console.error("❌ Error fetching chat history:", error);
+      }
+    };
+
+    fetchHistory();
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || !sessionId) return;
+
+    const fetchSessionMessages = async () => {
+      try {
+        setMessages([]); // clear old messages first
+
+        const response = await dispatch(
+          fetchCurrentSessionChats({ token, sessionId })
+        );
+        const rawMessages = response.payload.data || [];
+
+        console.log("✅ Session Messages: ", rawMessages);
+
+        const parsedMessages = rawMessages.map((item) =>
+          typeof item === "string" ? JSON.parse(item) : item
+        );
+
+        dispatch(addChats({ chats: parsedMessages }));
+
+        // convert parsedMessages to frontend format
+        const messageObjects = parsedMessages.flatMap((msg) => [
+          {
+            id: msg._id,
+            type: "user",
+            content: msg.userPrompt,
+            timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }),
+          },
+          {
+            id: msg.createdAt,
+            type: "ai",
+            content: msg.userResponse,
+            timestamp: new Date(msg.updatedAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }),
+          },
+        ]);
+
+        setMessages(messageObjects);
+      } catch (error) {
+        console.error("❌ Error fetching session messages:", error);
+      }
+    };
+
+    fetchSessionMessages();
+  }, [token, sessionId]);
 
   // active chat even if reload the page
   useEffect(() => {

@@ -9,7 +9,7 @@ import {
   History,
 } from "lucide-react";
 import { themeContext } from "../../context/context";
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { nav } from "framer-motion/client";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentSessionId } from "../../redux";
@@ -20,7 +20,7 @@ const ChatHistory = ({
   onChatSelect,
   onNewChat,
   theme,
-  setCurrentChat
+  setCurrentChat,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -178,18 +178,16 @@ const ChatHistory = ({
                   >
                     {/* Main Chat Button - covers most of the area */}
                     <Link to={`/c/${chat.sessionId}`}>
-                    <button
-                      onClick={() => {
-                        onChatSelect(chat);
-                        setIsSidebarOpen(false);
-                        setCurrentChat(chat);
-                        setCurrentSessionId(chat.sessionId);
-                        // onNewChat();
-                        // navigate(`/c/${chat.sessionId}`);
-                      }}
-                      className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                      style={{ zIndex: 1 }}
-                    />
+                      <button
+                        onClick={() => {
+                          onChatSelect(chat);
+                          setIsSidebarOpen(false);
+                          setCurrentChat(chat);
+                          dispatch(setCurrentSessionId(chat.sessionId));
+                        }}
+                        className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                        style={{ zIndex: 1 }}
+                      />
                     </Link>
 
                     <div className="flex items-start justify-between">
@@ -206,7 +204,9 @@ const ChatHistory = ({
                             theme === "dark" ? "text-gray-400" : "text-gray-500"
                           }`}
                         >
-                          {chat.lastResponse ? chat.lastResponse.slice(0, 100) : "No response"}
+                          {chat.lastResponse
+                            ? chat.lastResponse.slice(0, 100)
+                            : "No response"}
                         </p>
                         <span
                           className={`text-xs mt-1 block ${
