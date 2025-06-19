@@ -27,16 +27,24 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../firebase/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import { current } from "@reduxjs/toolkit";
-import { u } from "framer-motion/client";
+import { nav, u } from "framer-motion/client";
 
 const Dashboard = () => {
   const { sessionId } = useParams();
 
-  const currentSessionChats = useSelector(state=>state.user_current_session_chats)
+  const currentSessionChats = useSelector(
+    (state) => state.user_current_session_chats
+  );
   console.log("Current Session Chats: ", currentSessionChats);
-  console.log("isArray : ?" , Array.isArray(Object.values(currentSessionChats)));
-  console.log("Current Session Chats Length: ", Object.values(currentSessionChats).length);
-  console.log("Current Session Chats Values: ", Object.values(currentSessionChats));
+  console.log("isArray : ?", Array.isArray(Object.values(currentSessionChats)));
+  console.log(
+    "Current Session Chats Length: ",
+    Object.values(currentSessionChats).length
+  );
+  console.log(
+    "Current Session Chats Values: ",
+    Object.values(currentSessionChats)
+  );
 
   const [messages, setMessages] = useState([]);
 
@@ -66,7 +74,7 @@ const Dashboard = () => {
     dispatch(setCurrentSessionId({ sessionId }));
   }, []);
 
-  // For setting the theme 
+  // For setting the theme
   useEffect(() => {
     localStorage.getItem("theme") === "dark"
       ? setTheme("dark")
@@ -84,7 +92,6 @@ const Dashboard = () => {
 
         // fetch the user chat accorrding to sessionId and token
         if (sessionId) {
-
           setMessages([]); // clear the messages before fetching new session chats
 
           const response = await dispatch(
@@ -95,9 +102,13 @@ const Dashboard = () => {
             response.payload.data
           );
 
-          dispatch(addChats({ chats: response.payload.data.map(item=>
-            typeof item === 'string' ? JSON.parse(item) : item
-          ) }));
+          dispatch(
+            addChats({
+              chats: response.payload.data.map((item) =>
+                typeof item === "string" ? JSON.parse(item) : item
+              ),
+            })
+          );
 
           // this is the actual logic to show the messages according to sessionId to the ui
           response.payload.data.map((message) => {
@@ -152,24 +163,25 @@ const Dashboard = () => {
   const handleSendMessage = async (message) => {
     dispatch(setLoading());
 
+    const idToken = await auth.currentUser.getIdToken();
+    if (!idToken) {
+      alert("Can't get idToken");
+      dispatch(unsetloading());
+      return;
+    }
+
     if (!sessionId) {
       const newSessionId = uuid();
-
       if (!newSessionId) {
         alert("Error creating new chat session");
+        dispatch(unsetloading());
         return;
       }
 
-      const idToken = await auth.currentUser.getIdToken();
-
       const backendResponse = await createNewChatSession(newSessionId, idToken);
-      console.log("Backend Response: ", backendResponse);
-
       if (backendResponse.status !== 200 && backendResponse.status !== 201) {
-        console.log(
-          "Error creating new chat session: ",
-          backendResponse.message
-        );
+        console.log("Error:", backendResponse.message);
+        dispatch(unsetloading());
         return;
       }
 
@@ -185,27 +197,31 @@ const Dashboard = () => {
           hour12: true,
         }),
       };
-
       setMessages((prev) => [...prev, userMessage]);
 
-      // ✅ Move unsetloading INSIDE timeout
-      setTimeout(() => {
-        const aiMessage = {
-          id: Date.now() + 1,
-          type: "ai",
-          content:
-            "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          }),
-        };
+      const backendAiResponse = await getChatResponse({
+        token: idToken,
+        prompt: message,
+        sessionId: newSessionId,
+      });
 
-        setMessages((prev) => [...prev, aiMessage]);
-        dispatch(unsetloading()); // ✅ Correct place
-      }, 2000);
-      // navigate(`/c/${newSessionId}`);
+      const aiMessage = {
+        id: Date.now() + 1,
+        type: "ai",
+        content: backendAiResponse.data.data.cloudFileUrl
+          ? `📄 PDF Link: ${backendAiResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendAiResponse.data.data.response}`
+          : backendAiResponse.data.data.response,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+
+      dispatch(unsetloading());
+      navigate(`/c/${newSessionId}`);
     } else {
       const userMessage = {
         id: Date.now(),
@@ -217,100 +233,83 @@ const Dashboard = () => {
           hour12: true,
         }),
       };
-
       setMessages((prev) => [...prev, userMessage]);
 
-      // setTimeout(() => {
-      //   const aiMessage = {
-      //     id: Date.now() + 1,
-      //     type: "ai",
-      //     content:
-      //       "I'll help you create an amazing resume! Let me gather some information about your experience and skills to craft the perfect resume for you.",
-      //     timestamp: new Date().toLocaleTimeString([], {
-      //       hour: "2-digit",
-      //       minute: "2-digit",
-      //       hour12: true,
-      //     }),
-      //   };
+      const backendResponse = await getChatResponse({
+        token: idToken,
+        prompt: message,
+        sessionId: sessionId,
+      });
 
-      //   setMessages((prev) => [...prev, aiMessage]);
-      //   dispatch(unsetloading()); // ✅ Move here
-      // }, 2000);
+      const aiMessage = {
+        id: Date.now() + 1,
+        type: "ai",
+        content: backendResponse.data.data.cloudFileUrl
+          ? `📄 PDF Link: ${backendResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendResponse.data.data.response}`
+          : backendResponse.data.data.response,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+      dispatch(unsetloading());
     }
-
-    const idToken = await auth.currentUser.getIdToken();
-    if (!idToken) {
-      alert("Cant able to get idToken");
-      return;
-    }
-
-    const backendResponse = await getChatResponse({
-      token: idToken,
-      prompt: message,
-      sessionId: sessionId,
-    });
-    console.log("Backend Response after sending message: ", backendResponse);
-    console.log("Actual response: ", backendResponse.data.data.response);
-
-    const aiMessage = {
-      id: Date.now() + 1,
-      type: "ai",
-      content: backendResponse.data.data.cloudFileUrl
-        ? `📄 PDF Link: ${backendResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendResponse.data.data.response}`
-        : backendResponse.data.data.response,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
-    };
-
-    setMessages((prev) => [...prev, aiMessage]);
-
-    dispatch(unsetloading()); // ✅ Move here
-
-    //   setMessages((prev) => [...prev, aiMessage]);
-    //   console.log("Loading State should end: ", isLoading);
-    // }, 1500);
   };
 
   const handleNewChat = async () => {
     dispatch(setPageLoading());
+
+    // when creating new chat, clear messages
     setMessages([]);
 
-    const newSessionId = uuid();
-    console.log("New Session ID: ", newSessionId);
+    // if (messages.length > 0) {
+    //   const newSessionId = uuid();
+    //   console.log("New Session ID: ", newSessionId);
 
-    try {
-      if (!auth.currentUser) {
-        alert("User not logged in. Please login first.");
-        dispatch(unsetPageLoading());
-        return;
-      }
+    //   try {
+    //     if (!auth.currentUser) {
+    //       alert("User not logged in. Please login first.");
+    //       dispatch(unsetPageLoading());
+    //       return;
+    //     }
 
-      dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
+    //     dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
 
-      const idToken = await auth.currentUser.getIdToken();
-      console.log("Current User ID Token: ", idToken);
+    //     const idToken = await auth.currentUser.getIdToken();
+    //     console.log("Current User ID Token: ", idToken);
 
-      const backendResponse = await createNewChatSession(newSessionId, idToken);
-      console.log("Backend Response: ", backendResponse);
+    //     const backendResponse = await createNewChatSession(
+    //       newSessionId,
+    //       idToken
+    //     );
+    //     console.log("Backend Response: ", backendResponse);
 
-      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
-        console.log(
-          "Error creating new chat session: ",
-          backendResponse.message
-        );
-        return;
-      }
+    //     if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+    //       console.log(
+    //         "Error creating new chat session: ",
+    //         backendResponse.message
+    //       );
+    //       return;
+    //     }
 
-      setCurrentChat({ sessionId: newSessionId });
-      // navigate(`/c/${newSessionId}`);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      dispatch(unsetPageLoading());
-    }
+    //     setCurrentChat({ sessionId: newSessionId });
+    //     // navigate(`/new-chat`);
+    //   } catch (err) {
+    //     alert(err.message);
+    //   } finally {
+    //     dispatch(unsetPageLoading());
+    //     // setMessages([]);
+    //   }
+    // }else{
+    //   navigate(`/new-chat`);
+    // }
+
+    navigate(`/new-chat`);
+
+    dispatch(unsetPageLoading());
   };
 
   const handleChatSelect = (chat) => {
@@ -318,7 +317,7 @@ const Dashboard = () => {
 
     // that was the issue for messages disappear after chat selection
     // In real app, load chat messages from API
-    // setMessages([]);     
+    // setMessages([]);
   };
 
   return (

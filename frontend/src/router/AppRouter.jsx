@@ -85,7 +85,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path : '/chat',
+    path : '/new-chat',
     element : (
       <ProtectedRoute>
         <MainLayout>
