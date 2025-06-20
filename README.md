@@ -16,3 +16,5 @@ For Generating Resumes on prompts so that i can understand frontend , backend , 
 	Test both services via Postman
 	Add Nginx or Docker Compose
 	Final: Add frontend (React/Next.js)
+
+remaining pdf div in frontend and real time download pdf for ui 
