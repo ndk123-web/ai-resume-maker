@@ -224,6 +224,7 @@ const Dashboard = () => {
           {
             id: msg.createdAt,
             type: "ai",
+            cloudFileUrl: msg.resumeUrl || null,
             content: msg.userResponse,
             timestamp: new Date(msg.updatedAt).toLocaleTimeString([], {
               hour: "2-digit",
@@ -295,8 +296,9 @@ const Dashboard = () => {
       });
 
       const aiMessage = {
-        id: Date.now() + 1,
+        id: Date.now() + 1, 
         type: "ai",
+        cloudFileUrl: backendAiResponse.data.data.cloudFileUrl || null,
         content: backendAiResponse.data.data.cloudFileUrl
           ? `📄 PDF Link: ${backendAiResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendAiResponse.data.data.response}`
           : backendAiResponse.data.data.response,
@@ -333,6 +335,7 @@ const Dashboard = () => {
       const aiMessage = {
         id: Date.now() + 1,
         type: "ai",
+        cloudFileUrl: backendResponse.data.data.cloudFileUrl || null,
         content: backendResponse.data.data.cloudFileUrl
           ? `📄 PDF Link: ${backendResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendResponse.data.data.response}`
           : backendResponse.data.data.response,
