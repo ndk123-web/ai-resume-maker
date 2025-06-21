@@ -33,16 +33,18 @@ import { BlurText } from "../../components/";
 import { Link } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { themeContext } from "../../context/context";
+import { useSelector } from "react-redux";
 
 const HeroSection = ({ stats, theme }) => {
   const { setTheme } = useContext(themeContext);
+  const authStatus = useSelector((state) => state.auth.status);
 
   // useEffect(() => {
   //   localStorage.getItem("theme") === "dark"
   //     ? setTheme("dark")
   //     : setTheme("light");
   // }, []);
-  
+
   return (
     <>
       <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
@@ -116,7 +118,7 @@ const HeroSection = ({ stats, theme }) => {
               >
                 <span className="flex items-center space-x-2">
                   <Rocket className="w-5 h-5" />
-                  <Link to={"/auth"}>
+                  <Link to={authStatus ? "/builder" : "/auth"}>
                     <span>Start Building Free</span>
                   </Link>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

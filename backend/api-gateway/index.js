@@ -36,6 +36,7 @@ const proxyOptions = {
 };
 
 app.use("/api/v1/user", proxy("localhost:3000", proxyOptions));
+app.use("api/v1/resumes",proxy("localhost:8000", proxyOptions));
 
 app.listen(5000, () => {
   console.log("Api Gateway For Microservices is running on port 5000");
