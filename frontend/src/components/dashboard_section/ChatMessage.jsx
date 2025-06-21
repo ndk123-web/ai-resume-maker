@@ -23,7 +23,29 @@ const ChatMessage = ({ message, theme }) => {
   const isUser = message.type === "user";
   const isLoading = message.isLoading;
 
-  useEffect(() => {});
+  // For Showing file size before download
+  // We r just using HEAD request , not the entire file so no need to worry about performance
+  useEffect(() => {
+    if (message.cloudFileUrl && !isUser) {
+      const fetchFileSize = async () => {
+        try {
+          const response = await fetch(message.cloudFileUrl, {
+            method: "HEAD", // Use HEAD to get headers without downloading the file
+          });
+          const contentLength = response.headers.get("content-length");
+          if (contentLength) {
+            setFileSize(parseInt(contentLength));
+          } else {
+            setFileSize(null); // If no content-length, set to null
+          }
+        } catch (error) {
+          console.error("Failed to fetch file size:", error);
+          setFileSize(null);
+        }
+      };
+      fetchFileSize();
+    }
+  }, [message, isUser]);
 
   const handleCopy = async () => {
     try {
