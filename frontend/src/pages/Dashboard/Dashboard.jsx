@@ -27,7 +27,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../../firebase/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import { current } from "@reduxjs/toolkit";
-import { nav, u } from "framer-motion/client";
+import { nav, s, u } from "framer-motion/client";
 
 const Dashboard = () => {
   const { sessionId } = useParams();
@@ -172,6 +172,8 @@ const Dashboard = () => {
     return () => unsubscribe(); // cleanup
   }, []);
 
+  // Fetch user chat history and current session messages
+  // when new chat created immediately re-render the chat history
   useEffect(() => {
     if (!token) return;
 
@@ -187,7 +189,7 @@ const Dashboard = () => {
     };
 
     fetchHistory();
-  }, [token]);
+  }, [token, sessionId]);
 
   useEffect(() => {
     if (!token || !sessionId) return;
@@ -210,29 +212,33 @@ const Dashboard = () => {
         dispatch(addChats({ chats: parsedMessages }));
 
         // convert parsedMessages to frontend format
-        const messageObjects = parsedMessages.flatMap((msg) => [
-          {
-            id: msg._id,
-            type: "user",
-            content: msg.userPrompt,
-            timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
+        const messageObjects = parsedMessages.flatMap((msg) => {
+          const istTimestamp = new Date(msg.createdAt).toLocaleTimeString(
+            "en-IN",
+            {
               hour: "2-digit",
               minute: "2-digit",
               hour12: true,
-            }),
-          },
-          {
-            id: msg.createdAt,
-            type: "ai",
-            cloudFileUrl: msg.resumeUrl || null,
-            content: msg.userResponse,
-            timestamp: new Date(msg.updatedAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            }),
-          },
-        ]);
+              timeZone: "Asia/Kolkata", // Ensures IST timezone
+            }
+          );
+
+          return [
+            {
+              id: msg._id,
+              type: "user",
+              content: msg.userPrompt,
+              timestamp: istTimestamp,
+            },
+            {
+              id: msg.createdAt,
+              type: "ai",
+              cloudFileUrl: msg.resumeUrl || null,
+              content: msg.userResponse,
+              timestamp: istTimestamp,
+            },
+          ];
+        });
 
         setMessages(messageObjects);
       } catch (error) {
@@ -296,7 +302,7 @@ const Dashboard = () => {
       });
 
       const aiMessage = {
-        id: Date.now() + 1, 
+        id: Date.now() + 1,
         type: "ai",
         cloudFileUrl: backendAiResponse.data.data.cloudFileUrl || null,
         content: backendAiResponse.data.data.cloudFileUrl
@@ -429,6 +435,8 @@ const Dashboard = () => {
           theme={theme}
           setCurrentChat={setCurrentChat}
           onNewChat={handleNewChat}
+          idToken={token}
+          setMessages={setMessages}
         />
 
         {/* Main Chat Area */}
@@ -501,6 +509,7 @@ const Dashboard = () => {
                     key={message.id}
                     message={message}
                     theme={theme}
+                    timestamp={message.timestamp}
                   />
                 ))}
                 {isLoading && (

@@ -97,6 +97,7 @@ const createChatSession = asyncHandler(async (req, res) => {
     user: existingUser._id,
     sessionId: sessionId,
     title: (prompts.length > 0 && prompts[0].userPrompt.substring(0, 15)) || 'New Chat',
+    createdAt: new Date(),
   });
 
   console.log('New Chat Session: ', newChatSession);
@@ -172,4 +173,41 @@ const getCurrentSessionChats = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, currentSessionChats, 'Succcessfully fetched Current Session Chats'));
 });
 
-export { registerUser, loginUser, createChatSession, getUserChatHistory, getCurrentSessionChats };
+const deleteChat = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const { sessionId } = req.query;
+
+  const existUser = await User.findOne({ uid: user.uid });
+  if (!existUser) {
+    throw new ApiError(400, 'User Not registered');
+  }
+
+  const deleteSession = await chatSession.findOneAndDelete({
+    $and: [{ user: existUser._id }, { sessionId: sessionId }],
+  });
+
+  if (!deleteSession) {
+    throw new ApiError(400, 'Chat Session Not deleted');
+  }
+
+  const deletePrompts = await Prompt.deleteMany({
+    $and: [{ user: existUser._id }, { sessionId: sessionId }],
+  });
+
+  if (!deletePrompts) {
+    throw new ApiError(400, 'Chat Session Not deleted');
+  }
+
+  console.log('Deleted Chat Session: ', deleteSession);
+
+  res.status(200).json(new ApiResponse(200, deleteSession, 'Succcessfully deleted Chat Session'));
+});
+
+export {
+  registerUser,
+  loginUser,
+  deleteChat,
+  createChatSession,
+  getUserChatHistory,
+  getCurrentSessionChats,
+};

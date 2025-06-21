@@ -13,14 +13,17 @@ import { useNavigate, Link } from "react-router-dom";
 import { nav } from "framer-motion/client";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentSessionId } from "../../redux";
+import { deleteChat } from "../../api/deleteChat.js";
 
 const ChatHistory = ({
   chatHistory,
+  setMessages,
   currentChat,
   onChatSelect,
   onNewChat,
   theme,
   setCurrentChat,
+  idToken,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -34,11 +37,24 @@ const ChatHistory = ({
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleDeleteChat = (chatId, e) => {
+  const handleDeleteChat = async (chatSessionId, e) => {
     e.stopPropagation();
     // In real app, call API to delete chat
-    console.log("Delete chat:", chatId);
+    console.log("Delete chat:", chatSessionId);
+
+    const backendResponse = await deleteChat({
+      sessionId: chatSessionId,
+      idToken,
+    });
+
+    if (!backendResponse.status || backendResponse.status !== 200) {
+      console.error("❌ Error deleting chat:", backendResponse);
+    }
+    setCurrentChat(null);
+    setCurrentSessionId(null);
     setActiveDropdown(null);
+    setMessages([]);
+    navigate("/new-chat");
   };
 
   return (
@@ -223,7 +239,9 @@ const ChatHistory = ({
                           onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(
-                              activeDropdown === chat._id ? null : chat._id
+                              activeDropdown === chat.sessionId
+                                ? null
+                                : chat.sessionId
                             );
                           }}
                           className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all duration-200 ${
@@ -236,7 +254,7 @@ const ChatHistory = ({
                         </button>
 
                         <AnimatePresence>
-                          {activeDropdown === chat._id && (
+                          {activeDropdown === chat.sessionId && (
                             <motion.div
                               initial={{ opacity: 0, scale: 0.95, y: -10 }}
                               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -248,7 +266,9 @@ const ChatHistory = ({
                               }`}
                             >
                               <button
-                                onClick={(e) => handleDeleteChat(chat._id, e)}
+                                onClick={(e) =>
+                                  handleDeleteChat(chat.sessionId, e)
+                                }
                                 className={`w-full flex items-center space-x-2 px-3 py-2 text-sm transition-colors ${
                                   theme === "dark"
                                     ? "text-red-400 hover:bg-gray-700"

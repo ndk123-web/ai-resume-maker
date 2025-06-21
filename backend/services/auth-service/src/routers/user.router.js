@@ -7,6 +7,7 @@ import {
   createChatSession,
   getUserChatHistory,
   getCurrentSessionChats,
+  deleteChat
 } from '../controllers/user.controller.js';
 
 const userRouter = Router();
@@ -17,6 +18,7 @@ userRouter.post('/login-user', verifyJWT, loginUser);
 userRouter.post('/create-chat-session', verifyJWT, createChatSession);
 userRouter.get('/get-user-chat-history', verifyJWT, getUserChatHistory);
 userRouter.post('/get-current-session-chats', verifyJWT, getCurrentSessionChats);
+userRouter.delete('/delete-chat',verifyJWT, deleteChat)
 
 // testing jwt
 userRouter.get('/test', verifyJWT, (req, res) => {
