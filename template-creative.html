@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Designer Resume</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+        .resume-template {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .creative-header {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .creative-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-100px) translateY(-100px); }
+        }
+        .creative-header .content {
+            position: relative;
+            z-index: 1;
+        }
+        .creative-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .creative-header .tagline {
+            font-size: 1.3rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        .creative-contact {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            font-size: 0.95rem;
+        }
+        .creative-body {
+            padding: 40px;
+        }
+        .creative-section {
+            margin-bottom: 40px;
+        }
+        .creative-section h2 {
+            color: #f5576c;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 20px;
+        }
+        .creative-section h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 30px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 4px;
+        }
+        .creative-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-left: 4px solid #f5576c;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .creative-item h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .creative-item .meta {
+            display: flex;
+            justify-content: between;
+            color: #f5576c;
+            font-weight: 600;
+            margin-bottom: 10px;
+            gap: 20px;
+        }
+        .creative-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .creative-skill-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-template">
+        <div class="creative-header">
+            <div class="content">
+                <h1>Sarah Martinez</h1>
+                <div class="tagline">Creative Director & Brand Strategist</div>
+                <div class="creative-contact">
+                    <div>✉️ sarah.martinez@email.com</div>
+                    <div>📞 +1 (555) 987-6543</div>
+                    <div>🏠 New York, NY</div>
+                    <div>🌐 sarahmartinez.design</div>
+                </div>
+            </div>
+        </div>
+        <div class="creative-body">
+            <div class="creative-section">
+                <h2>About Me</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #555;">
+                    Passionate creative director with 8+ years of experience crafting compelling brand narratives and innovative design solutions. Specialized in creating memorable visual identities that drive engagement and business growth.
+                </p>
+            </div>
+            <div class="creative-section">
+                <h2>Experience</h2>
+                <div class="creative-item">
+                    <h3>Creative Director</h3>
+                    <div class="meta">
+                        <span>BrandCraft Agency</span>
+                        <span>2022 - Present</span>
+                    </div>
+                    <p>Leading creative team of 12 designers and strategists. Developed brand identities for Fortune 500 companies resulting in 45% increase in brand recognition. Oversaw campaigns with budgets exceeding $2M.</p>
+                </div>
+                <div class="creative-item">
+                    <h3>Senior Art Director</h3>
+                    <div class="meta">
+                        <span>Creative Studios Inc.</span>
+                        <span>2019 - 2022</span>
+                    </div>
+                    <p>Conceptualized and executed integrated marketing campaigns across digital and traditional media. Managed multiple projects simultaneously while maintaining high creative standards and meeting tight deadlines.</p>
+                </div>
+                <div class="creative-item">
+                    <h3>Graphic Designer</h3>
+                    <div class="meta">
+                        <span>Design House</span>
+                        <span>2016 - 2019</span>
+                    </div>
+                    <p>Created visual content for print and digital platforms. Collaborated with clients to translate brand vision into compelling design solutions. Increased client retention rate by 30% through exceptional service.</p>
+                </div>
+            </div>
+            <div class="creative-section">
+                <h2>Core Skills</h2>
+                <div class="creative-grid">
+                    <div class="creative-skill-card">Brand Strategy</div>
+                    <div class="creative-skill-card">Visual Identity</div>
+                    <div class="creative-skill-card">Adobe Creative Suite</div>
+                    <div class="creative-skill-card">Typography</div>
+                    <div class="creative-skill-card">UI/UX Design</div>
+                    <div class="creative-skill-card">Campaign Development</div>
+                    <div class="creative-skill-card">Team Leadership</div>
+                    <div class="creative-skill-card">Client Relations</div>
+                    <div class="creative-skill-card">Project Management</div>
+                </div>
+            </div>
+            <div class="creative-section">
+                <h2>Education & Awards</h2>
+                <div class="creative-item">
+                    <h3>Bachelor of Fine Arts in Graphic Design</h3>
+                    <div class="meta">
+                        <span>Art Institute of New York</span>
+                        <span>2012 - 2016</span>
+                    </div>
+                    <p>Magna Cum Laude, Dean's List all semesters</p>
+                </div>
+                <div class="creative-item">
+                    <h3>Awards & Recognition</h3>
+                    <div class="meta">
+                        <span>Industry Recognition</span>
+                        <span>2020 - 2023</span>
+                    </div>
+                    <p>• Cannes Lions Bronze Award 2023<br>• D&AD Pencil Winner 2022<br>• Communication Arts Award 2021<br>• Webby Award Nominee 2020</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

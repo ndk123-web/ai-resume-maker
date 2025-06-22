@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Home, Dashboard, AuthPages } from "../pages/";
+import { Home, Dashboard, AuthPages, TemplateSelector } from "../pages/";
 import {
   PriciingSection,
   ProtectedRoute,
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <Dashboard />
+          <TemplateSelector />
         </MainLayout>
       </ProtectedRoute>
     ),
@@ -85,15 +85,15 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path : '/new-chat',
-    element : (
+    path: "/new-chat",
+    element: (
       <ProtectedRoute>
         <MainLayout>
           <Dashboard />
         </MainLayout>
       </ProtectedRoute>
-    )
-  }
+    ),
+  },
 ]);
 
 export default router;
