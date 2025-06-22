@@ -259,102 +259,109 @@ const Dashboard = () => {
   const handleSendMessage = async (message) => {
     dispatch(setLoading());
 
-    const idToken = await auth.currentUser.getIdToken();
-    if (!idToken) {
-      alert("Can't get idToken");
-      dispatch(unsetloading());
-      return;
-    }
-
-    if (!sessionId) {
-      const newSessionId = uuid();
-      if (!newSessionId) {
-        alert("Error creating new chat session");
-        dispatch(unsetloading());
+    try {
+      const idToken = await auth.currentUser.getIdToken();
+      if (!idToken) {
+        alert("Can't get idToken");
         return;
       }
 
-      const backendResponse = await createNewChatSession(newSessionId, idToken);
-      if (backendResponse.status !== 200 && backendResponse.status !== 201) {
-        console.log("Error:", backendResponse.message);
-        dispatch(unsetloading());
-        return;
+      if (!sessionId) {
+        const newSessionId = uuid();
+        if (!newSessionId) {
+          alert("Error creating new chat session");
+          return;
+        }
+
+        const backendResponse = await createNewChatSession(
+          newSessionId,
+          idToken
+        );
+        if (backendResponse.status !== 200 && backendResponse.status !== 201) {
+          console.log("Error:", backendResponse.message);
+          return;
+        }
+
+        dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
+
+        const userMessage = {
+          id: Date.now(),
+          type: "user",
+          content: message,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+        setMessages((prev) => [...prev, userMessage]);
+
+        const backendAiResponse = await getChatResponse({
+          token: idToken,
+          prompt: message,
+          sessionId: newSessionId,
+        });
+
+        const responseData = backendAiResponse?.data?.data || {};
+
+        const aiMessage = {
+          id: Date.now() + 1,
+          type: "ai",
+          cloudFileUrl: responseData.cloudFileUrl || null,
+          content: responseData.cloudFileUrl
+            ? `📄 PDF Link: ${responseData.cloudFileUrl}\n🧠 AI Response: ${responseData.response}`
+            : responseData.response || "No response from AI.",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+        navigate(`/c/${newSessionId}`);
+      } else {
+        const userMessage = {
+          id: Date.now(),
+          type: "user",
+          content: message,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+        setMessages((prev) => [...prev, userMessage]);
+
+        const backendResponse = await getChatResponse({
+          token: idToken,
+          prompt: message,
+          sessionId: sessionId,
+        });
+
+        const responseData = backendResponse?.data?.data || {};
+
+        const aiMessage = {
+          id: Date.now() + 1,
+          type: "ai",
+          cloudFileUrl: responseData.cloudFileUrl || null,
+          content: responseData.cloudFileUrl
+            ? `📄 PDF Link: ${responseData.cloudFileUrl}\n🧠 AI Response: ${responseData.response}`
+            : responseData.response || "No response from AI.",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+        setCurrentChat(null);
       }
-
-      dispatch(setCurrentSessionId({ currentSessionId: newSessionId }));
-
-      const userMessage = {
-        id: Date.now(),
-        type: "user",
-        content: message,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-
-      const backendAiResponse = await getChatResponse({
-        token: idToken,
-        prompt: message,
-        sessionId: newSessionId,
-      });
-
-      const aiMessage = {
-        id: Date.now() + 1,
-        type: "ai",
-        cloudFileUrl: backendAiResponse.data.data.cloudFileUrl || null,
-        content: backendAiResponse.data.data.cloudFileUrl
-          ? `📄 PDF Link: ${backendAiResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendAiResponse.data.data.response}`
-          : backendAiResponse.data.data.response,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-
+    } catch (err) {
+      alert(err.message);
+    } finally {
       dispatch(unsetloading());
-      navigate(`/c/${newSessionId}`);
-    } else {
-      const userMessage = {
-        id: Date.now(),
-        type: "user",
-        content: message,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-
-      const backendResponse = await getChatResponse({
-        token: idToken,
-        prompt: message,
-        sessionId: sessionId,
-      });
-
-      const aiMessage = {
-        id: Date.now() + 1,
-        type: "ai",
-        cloudFileUrl: backendResponse.data.data.cloudFileUrl || null,
-        content: backendResponse.data.data.cloudFileUrl
-          ? `📄 PDF Link: ${backendResponse.data.data.cloudFileUrl}\n🧠 AI Response: ${backendResponse.data.data.response}`
-          : backendResponse.data.data.response,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-      dispatch(unsetloading());
-      setCurrentChat(null);
     }
   };
 

@@ -3,7 +3,7 @@ import axios from "axios";
 const deleteChat = async ({ sessionId, idToken }) => {
   try {
     const backendResponse = await axios.delete(
-      "http://localhost:3000/api/v1/user/delete-chat",
+      "http://192.168.0.103:3000/api/v1/user/delete-chat",
       {
         headers: {
           Authorization: `Bearer ${idToken}`,

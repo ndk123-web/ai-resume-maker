@@ -11,7 +11,7 @@ from api.controller.resume_controller import handle_resume_creation
 from fastapi.responses import FileResponse
 from api.utils.generateResponse import generate_response
 from api.db.db import db 
-from datetime import datetime
+from datetime import datetime , timezone
 from bson import ObjectId
 
 # Define API router for resume endpoints
@@ -86,8 +86,8 @@ async def create_resume(
                 "userResponse": is_want_pdf_response[3:].lower().strip(),
                 "sessionId" : sessionId,
                 "resumeUrl" : "",
-                "createdAt" : datetime.now(),
-                "updatedAt" : datetime.now()
+                "createdAt" : datetime.now(timezone.utc),
+                "updatedAt" : datetime.now(timezone.utc)
             })
             
             print("Insert Prompt: ",insertPrompt)
@@ -132,8 +132,8 @@ async def create_resume(
                 "userResponse": is_want_pdf_response[4:].lower().strip(),
                 "sessionId" : sessionId,
                 "resumeUrl" : cloud_url_path,
-                "createdAt" : datetime.now(),
-                "updatedAt" : datetime.now()
+                "createdAt" : datetime.now(timezone.utc),
+                "updatedAt" : datetime.now(timezone.utc)
             })
             
             if not insertPrompt:
@@ -180,8 +180,8 @@ async def create_resume(
                 "userResponse": is_want_pdf_response[3:].lower().strip(),
                 "sessionId" : sessionId,
                 "resumeUrl" : "",
-                "createdAt" : datetime.now(),
-                "updatedAt" : datetime.now()
+                "createdAt" : datetime.utcnow(),
+                "updatedAt" : datetime.utcnow()
             })
             
             if not insertPrompt:

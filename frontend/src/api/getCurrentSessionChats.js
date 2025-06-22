@@ -3,7 +3,7 @@ import axios from "axios";
 const getCurrentSessionChats = async ({ token, sessionId }) => {
   try {
     const backendResponse = await axios.post(
-      "http://localhost:3000/api/v1/user/get-current-session-chats",
+      "http://192.168.0.103:3000/api/v1/user/get-current-session-chats",
       {
         sessionId: sessionId,
       },
