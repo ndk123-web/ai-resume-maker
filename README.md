@@ -114,7 +114,7 @@ uvicorn main:app --reload
 
 | Chat UI                   | Resume Output                 | Auth UI                   |
 | ------------------------- | ----------------------------- | ------------------------- |
-| ![chat](screens/chat.png) | ![resume](screens/resume.png) | ![auth](screens/auth.png) |
+| ![chat](https://github.com/ndk123-web/ai-resume-maker/tree/main/frontend/src/assets/Desktop_Dashboard.png) |  | ![auth](https://github.com/ndk123-web/ai-resume-maker/tree/main/frontend/src/assets/Desktop_SignIn.png) |
 
 ---
 
