@@ -1,18 +1,147 @@
-# ai-resume-maker
-For Generating Resumes on prompts so that i can understand frontend , backend , ai and system concepts
+# 🧠 AI Resume Builder
 
-## Sample WeasyPrint has done 
+An AI-powered resume builder that enables users to generate tailored, downloadable resumes via a chat-based interface. The app uses Gemini API for content generation and WeasyPrint for PDF creation, following a microservices architecture.
 
-	Task : 
-    
-	Setup MongoDB Atlas with users & resumes collections
-	auth-service: Register, Login, JWT generate
-	Test JWT verification in Postman
-	Start ai-service with FastAPI boilerplate
-	Setup /generate-resume route with token-based auth
-	Use Gemini API and test HTML
-	Use WeasyPrint for PDF creation
-	Store prompt, html, pdf path in DB
-	Test both services via Postman
-	Add Nginx or Docker Compose
-	Final: Add frontend (React/Next.js)
+---
+
+## 🛠️ Tech Stack
+
+### 🔹 Frontend
+
+* **React** (with Vite)
+* **Tailwind CSS**
+* **Redux Toolkit** + **Redux Persist**
+* **React-Redux**
+* **Framer Motion**, **Lucide Icons**
+
+### 🔹 Backend
+
+* **Auth Service**: Node.js + Express
+* **Resume Generation Service**: Python + FastAPI
+
+> Note: PDF rendering is handled internally and details of the Python libraries used are intentionally abstracted.
+
+### 🔹 Authentication
+
+* **Firebase Authentication**
+
+  * Google Sign-In
+  * GitHub Sign-In
+* JWT-secured protected routes
+
+### 🔹 AI Integration
+
+* **Gemini API**: Generates dynamic, prompt-based resume content
+
+---
+
+## 🧱 Architecture
+
+This application follows a **Microservices Architecture**:
+
+* React frontend
+* Node.js Auth Service
+* FastAPI Resume Generator Service
+
+Each service communicates via RESTful APIs secured with JWT.
+
+---
+
+## 🗂️ Data & File Storage
+
+* **MongoDB Atlas**: Stores users, sessions, prompts, and resume metadata
+* **Cloudinary**: Hosts the generated PDF resumes
+
+---
+
+## ⛔️ Not Included Yet
+
+* Payment integration
+* Production deployment
+* CI/CD pipeline
+
+> These are planned after DevOps training.
+
+---
+
+## ⚙️ Features
+
+* Secure authentication with Firebase (Google + GitHub)
+* AI-powered resume suggestions via chat
+* Multiple downloadable resume templates
+* Resume stored in Cloudinary
+* Session-based chat history
+* Fully responsive UI
+
+---
+
+## 🧪 Local Development Setup
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/yourname/ai-resume-builder.git
+cd ai-resume-builder
+```
+
+### 2. Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 3. Auth Backend (Node.js)
+
+```bash
+cd backend-auth
+npm install
+npm run dev
+```
+
+### 4. Resume Generator (FastAPI)
+
+```bash
+cd backend-resume
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+---
+
+## 📷 Screenshots
+
+| Chat UI                   | Resume Output                 | Auth UI                   |
+| ------------------------- | ----------------------------- | ------------------------- |
+| ![chat](screens/chat.png) | ![resume](screens/resume.png) | ![auth](screens/auth.png) |
+
+---
+
+## 📌 Roadmap
+
+* [ ] Add Stripe payment integration
+* [ ] Add Docker + Kubernetes support
+* [ ] CI/CD with GitHub Actions
+* [ ] Serverless deployment of PDF generator
+
+---
+
+## 🙋‍♂️ Author
+
+Built with dedication by [Your Name](https://linkedin.com/in/your-link)
+
+---
+
+## 👍 Final Thoughts
+
+This project marks the completion of a full-stack SaaS system using modern architecture and tools. It's the foundation for future DevOps, cloud-native deployments, and professional scaling.
+
+**Next Steps:**
+
+* Learn DevOps
+* Dockerize services
+* Automate deployment
+* Implement analytics & monitoring
+
+> Ready for production once templates are integrated properly.
