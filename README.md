@@ -113,6 +113,26 @@ uvicorn main:app --reload
 
 ## 📷 Screenshots
 
+| Desktop Dashboard                                                                                                      | Desktop Home                                                                                                 |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| ![Desktop_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png) | ![Desktop_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Home.png) |
+
+| Desktop SignIn                                                                                                   | Desktop Template                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| ![Desktop_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_SignIn.png) | ![Desktop_Template](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Template.png) |
+
+| Light Desktop Home                                                                                                       | Light Mobile Home                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| ![Light_Desktop_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Light_Desktop_Home.png) | ![Light_Mobile_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Light_Mobile_Home.png) |
+
+| Mobile Dashboard                                                                                                     | Mobile Home                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| ![Mobile_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_Dashboard.png) | ![Mobile_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_Home.png) |
+
+| Mobile SignIn                                                                                                  | React SVG                                                                                      |
+| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Mobile_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_SignIn.png) | ![react](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/react.svg) |
+
 ### Desktop Dashboard
 
 ![Desktop_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png)
