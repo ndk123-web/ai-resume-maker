@@ -1,6 +1,6 @@
 # 🧠 AI Resume Builder
 
-An AI-powered resume builder that enables users to generate tailored, downloadable resumes via a chat-based interface. The app uses Gemini API for content generation and WeasyPrint for PDF creation, following a microservices architecture.
+An AI-powered resume builder that enables users to generate tailored, downloadable resumes via a chat-based interface. The app uses Gemini API for content generation and an internal Python service for PDF creation, following a microservices architecture.
 
 ---
 
@@ -114,7 +114,19 @@ uvicorn main:app --reload
 
 | Chat UI                   | Resume Output                 | Auth UI                   |
 | ------------------------- | ----------------------------- | ------------------------- |
-| ![chat](https://github.com/ndk123-web/ai-resume-maker/tree/main/frontend/src/assets/Desktop_Dashboard.png) |  | ![auth](https://github.com/ndk123-web/ai-resume-maker/tree/main/frontend/src/assets/Desktop_SignIn.png) |
+| ![chat](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png) |  | ![auth](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_SignIn.png) |
+
+| Desktop Dashboard | Desktop Home | Desktop SignIn | Desktop Template |
+|-------------------|-------------|----------------|-----------------|
+| ![Desktop_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png) | ![Desktop_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Home.png) | ![Desktop_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_SignIn.png) | ![Desktop_Template](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Template.png) |
+
+| Light Desktop Home | Light Mobile Home | Mobile Dashboard | Mobile Home |
+|--------------------|-------------------|------------------|-------------|
+| ![Light_Desktop_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Light_Desktop_Home.png) | ![Light_Mobile_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Light_Mobile_Home.png) | ![Mobile_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_Dashboard.png) | ![Mobile_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_Home.png) |
+
+| Mobile SignIn | React SVG |
+|---------------|-----------|
+| ![Mobile_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_SignIn.png) | ![react](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/react.svg) |
 
 ---
 
@@ -125,11 +137,13 @@ uvicorn main:app --reload
 * [ ] CI/CD with GitHub Actions
 * [ ] Serverless deployment of PDF generator
 
+> These are planned after DevOps training.
+
 ---
 
 ## 🙋‍♂️ Author
 
-Built with dedication by [Your Name](https://linkedin.com/in/your-link)
+Built with dedication by *Navnath Kadam* (https://www.linkedin.com/in/navnath-kadam-883a57288/)
 
 ---
 
