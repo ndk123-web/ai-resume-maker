@@ -8,30 +8,31 @@ An AI-powered resume builder that enables users to generate tailored, downloadab
 
 ### 🔹 Frontend
 
-* **React** (with Vite)
-* **Tailwind CSS**
-* **Redux Toolkit** + **Redux Persist**
-* **React-Redux**
-* **Framer Motion**, **Lucide Icons**
+- **React** (with Vite)
+- **Tailwind CSS**
+- **Redux Toolkit** + **Redux Persist**
+- **React-Redux**
+- **Framer Motion**, **Lucide Icons**
 
 ### 🔹 Backend
 
-* **Auth Service**: Node.js + Express
-* **Resume Generation Service**: Python + FastAPI
+- **Auth Service**: Node.js + Express
+- **Resume Generation Service**: Python + FastAPI
 
 > Note: PDF rendering is handled internally and details of the Python libraries used are intentionally abstracted.
 
 ### 🔹 Authentication
 
-* **Firebase Authentication**
+- **Firebase Authentication**
 
-  * Google Sign-In
-  * GitHub Sign-In
-* JWT-secured protected routes
+  - Google Sign-In
+  - GitHub Sign-In
+
+- JWT-secured protected routes
 
 ### 🔹 AI Integration
 
-* **Gemini API**: Generates dynamic, prompt-based resume content
+- **Gemini API**: Generates dynamic, prompt-based resume content
 
 ---
 
@@ -39,9 +40,9 @@ An AI-powered resume builder that enables users to generate tailored, downloadab
 
 This application follows a **Microservices Architecture**:
 
-* React frontend
-* Node.js Auth Service
-* FastAPI Resume Generator Service
+- React frontend
+- Node.js Auth Service
+- FastAPI Resume Generator Service
 
 Each service communicates via RESTful APIs secured with JWT.
 
@@ -49,16 +50,16 @@ Each service communicates via RESTful APIs secured with JWT.
 
 ## 🗂️ Data & File Storage
 
-* **MongoDB Atlas**: Stores users, sessions, prompts, and resume metadata
-* **Cloudinary**: Hosts the generated PDF resumes
+- **MongoDB Atlas**: Stores users, sessions, prompts, and resume metadata
+- **Cloudinary**: Hosts the generated PDF resumes
 
 ---
 
 ## ⛔️ Not Included Yet
 
-* Payment integration
-* Production deployment
-* CI/CD pipeline
+- Payment integration
+- Production deployment
+- CI/CD pipeline
 
 > These are planned after DevOps training.
 
@@ -66,12 +67,12 @@ Each service communicates via RESTful APIs secured with JWT.
 
 ## ⚙️ Features
 
-* Secure authentication with Firebase (Google + GitHub)
-* AI-powered resume suggestions via chat
-* Multiple downloadable resume templates
-* Resume stored in Cloudinary
-* Session-based chat history
-* Fully responsive UI
+- Secure authentication with Firebase (Google + GitHub)
+- AI-powered resume suggestions via chat
+- Multiple downloadable resume templates
+- Resume stored in Cloudinary
+- Session-based chat history
+- Fully responsive UI
 
 ---
 
@@ -112,30 +113,28 @@ uvicorn main:app --reload
 
 ## 📷 Screenshots
 
-| Chat UI                   | Resume Output                 | Auth UI                   |
-| ------------------------- | ----------------------------- | ------------------------- |
-| ![chat](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png) |  | ![auth](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_SignIn.png) |
+| Chat UI                                                                                                   | Resume Output | Auth UI                                                                                                |
+| --------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
+| ![chat](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png) |               | ![auth](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_SignIn.png) |
 
-| Desktop Dashboard | Desktop Home | Desktop SignIn | Desktop Template |
-|-------------------|-------------|----------------|-----------------|
+| Desktop Dashboard                                                                                                      | Desktop Home                                                                                                 | Desktop SignIn                                                                                                   | Desktop Template                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | ![Desktop_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Dashboard.png) | ![Desktop_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Home.png) | ![Desktop_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_SignIn.png) | ![Desktop_Template](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Desktop_Template.png) |
 
-| Light Desktop Home | Light Mobile Home | Mobile Dashboard | Mobile Home |
-|--------------------|-------------------|------------------|-------------|
+| Light Desktop Home                                                                                                       | Light Mobile Home                                                                                                      | Mobile Dashboard                                                                                                     | Mobile Home                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | ![Light_Desktop_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Light_Desktop_Home.png) | ![Light_Mobile_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Light_Mobile_Home.png) | ![Mobile_Dashboard](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_Dashboard.png) | ![Mobile_Home](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_Home.png) |
 
-| Mobile SignIn | React SVG |
-|---------------|-----------|
-| ![Mobile_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_SignIn.png) | ![react](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/react.svg) |
-
----
+| Mobile SignIn                                                                                                  | React SVG |
+| -------------------------------------------------------------------------------------------------------------- | --------- |
+| ![Mobile_SignIn](https://github.com/ndk123-web/ai-resume-maker/raw/main/frontend/src/assets/Mobile_SignIn.png) |
 
 ## 📌 Roadmap
 
-* [ ] Add Stripe payment integration
-* [ ] Add Docker + Kubernetes support
-* [ ] CI/CD with GitHub Actions
-* [ ] Serverless deployment of PDF generator
+- [ ] Add Stripe payment integration
+- [ ] Add Docker + Kubernetes support
+- [ ] CI/CD with GitHub Actions
+- [ ] Serverless deployment of PDF generator
 
 > These are planned after DevOps training.
 
@@ -143,7 +142,7 @@ uvicorn main:app --reload
 
 ## 🙋‍♂️ Author
 
-Built with dedication by *Navnath Kadam* (https://www.linkedin.com/in/navnath-kadam-883a57288/)
+Built with dedication by _Navnath Kadam_ (https://www.linkedin.com/in/navnath-kadam-883a57288/)
 
 ---
 
@@ -153,9 +152,9 @@ This project marks the completion of a full-stack SaaS system using modern archi
 
 **Next Steps:**
 
-* Learn DevOps
-* Dockerize services
-* Automate deployment
-* Implement analytics & monitoring
+- Learn DevOps
+- Dockerize services
+- Automate deployment
+- Implement analytics & monitoring
 
 > Ready for production once templates are integrated properly.
