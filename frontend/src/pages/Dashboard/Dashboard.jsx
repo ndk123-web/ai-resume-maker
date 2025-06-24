@@ -356,7 +356,6 @@ const Dashboard = () => {
         };
 
         setMessages((prev) => [...prev, aiMessage]);
-        setCurrentChat(null);
       }
     } catch (err) {
       alert(err.message);
