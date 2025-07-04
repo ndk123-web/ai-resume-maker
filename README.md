@@ -2,6 +2,8 @@
 
 An AI-powered resume builder that enables users to generate tailored, downloadable resumes via a chat-based interface. The app uses Gemini API for content generation and an internal Python service for PDF creation, following a microservices architecture.
 
+Changed the Base prompt from env so that now this app giving most beautiful ATS compatible Resume 
+
 ---
 
 ## 🛠️ Tech Stack
