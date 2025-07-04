@@ -3,7 +3,7 @@ import axios from "axios";
 const getChatResponse = async ({ token, prompt, sessionId }) => {
   try {
     const backendResponse = await axios.post(
-      "http://192.168.0.103:8000/api/v1/resumes/create-resume",
+      "http://localhost:8000/api/v1/resumes/create-resume",
       {
         resumePrompt: prompt,
         sessionId: sessionId,

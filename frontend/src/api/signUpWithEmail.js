@@ -3,7 +3,7 @@ import axios from "axios";
 const signUpWithEmail = async (token) => {
   try {
     const response = await axios.post(
-      "http://192.168.0.103:3000/api/v1/user/register-user",
+      "http://localhost:3000/api/v1/user/register-user",
       {},
       {
         headers: {

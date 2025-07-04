@@ -3,7 +3,7 @@ import axios from "axios";
 const createNewChatSession = async (sessionId, idToken) => {
   try {
     const response = await axios.post(
-      "http://192.168.0.103:3000/api/v1/user/create-chat-session",
+      "http://localhost:3000/api/v1/user/create-chat-session",
       {
         sessionId: sessionId,
       },

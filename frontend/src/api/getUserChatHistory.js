@@ -3,7 +3,7 @@ import axios from "axios";
 const getUserChatHistory = async ({ token }) => {
   try {
     const response = await axios.get(
-      "http://192.168.0.103:3000/api/v1/user/get-user-chat-history",
+      "http://localhost:3000/api/v1/user/get-user-chat-history",
       {
         headers: {
           Authorization: `Bearer ${token}`,
