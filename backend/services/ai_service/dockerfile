@@ -1,0 +1,19 @@
+# Stage 1 
+FROM python:3.11 AS builder 
+
+WORKDIR /usr/app
+
+COPY requirements.txt .
+
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+# Stage 2 -> Final Image Size 
+FROM python:3.11-slim
+
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+
+COPY . .   
+
+EXPOSE 8000
+
+CMD ["python", "-m", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
