@@ -8,7 +8,16 @@ services:
       - "5173:5173"
     networks:
       - ai_resume_network
-  
+    depends_on:
+      - ai_resume_ai_backend
+      - ai_resume_auth_backend
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   ai_resume_auth_backend:
     container_name: ai_resume_auth_backend
     build: ./backend/services/auth-service 
@@ -16,12 +25,24 @@ services:
       - "3000:3000"
     networks:
       - ai_resume_network
+    restart: always  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   ai_resume_ai_backend:
     container_name: ai_resume_ai_backend
     build: ./backend/services/ai_service  
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: always
     networks:
       - ai_resume_network
 
