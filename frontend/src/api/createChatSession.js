@@ -3,7 +3,7 @@ import axios from "axios";
 const createNewChatSession = async (sessionId, idToken) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/v1/user/create-chat-session",
+      `${import.meta.env.VITE_AI_BACKEND_API}/api/v1/user/create-chat-session`,
       {
         sessionId: sessionId,
       },

@@ -3,7 +3,7 @@ import axios from "axios";
 const signUpWithEmail = async (token) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/v1/user/register-user",
+      `${import.meta.env.VITE_AUTH_BACKEND_API}/api/v1/user/register-user`,
       {},
       {
         headers: {
